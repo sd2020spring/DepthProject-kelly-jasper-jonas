@@ -36,6 +36,39 @@ def login():
    return redirect(url_for('error'))
 
 
+@app.route("/sign-up")
+def signup():
+	return render_template("sign-up.html")
+
+@app.route("/search/?=<query>") # results page from a search
+def search(query):
+	return render_template("search.html",results=results)
+
+@app.route("/list") # list an item yourself here
+def list():
+	"""List an item to the marketplace
+	- will probably be an html form
+
+	"""
+	return render_template("list.html")
+
+@app.route("/item/<item>") # view an item listing
+def listing(item):
+	return render_template("listing.html",item=item)
+
+@app.route("/checkout") # checkout with current items
+def checkout(items):
+	return render_template("checkout.html")
+
+@app.route("/thank-you") # purchase confirmation
+def purchaseSuccess():
+	return render_template("thank-you.html")
+
+@app.route("/purchase-error") # purchase fail alert
+def purchaseError():
+	return render_template("purchase-error.html")
+
+
 if __name__ == '__main__':
     # Configures database and gets access to the database
     cred = credentials.Certificate('ServiceAccountKey.json')
