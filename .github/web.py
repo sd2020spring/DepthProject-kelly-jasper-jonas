@@ -6,6 +6,14 @@ from Item import *
 
 app = Flask(__name__)
 
+def get_all_items():
+  '''Gets all the items in Items DB
+     Returns them as a list of dictionaries'''
+  items = DB.collection(u'Items').stream()
+  items_list = []
+  for item in items:
+    items_list.append(item.to_dict())
+  return items_list
 
 def login_validate(email, password):
     users = DB.collection(u'Users').stream()
@@ -14,8 +22,6 @@ def login_validate(email, password):
         if user.get('password') == password and user.get('email') == email:
             return True, user.id
     return False, user.id
-
-
 
 @app.route('/')
 def splash(): 
@@ -46,7 +52,7 @@ def validate_login():
        else: 
             error = "Incorrect username or password"
             return redirect(url_for('loginerror'))
-   
+            
    return redirect(url_for('error'))
 
 @app.route('/validatesignup', methods = ['POST', 'GET'])
@@ -65,7 +71,8 @@ def validate_signup():
 @app.route("/userhome/<userid>")#displays unique homepage
 def userhome(userid):
     first_name = DB.collection(u'Users').document(userid).get().get('fname')
-    return render_template("userhome.html", user_id=userid, name=first_name)
+    items = get_all_items()
+    return render_template("userhome.html", user_id=userid, name=first_name, items = items)
 
 @app.route("/list/<userid>") # list an item yourself here
 def list():
