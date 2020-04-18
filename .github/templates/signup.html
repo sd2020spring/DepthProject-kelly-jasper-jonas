@@ -5,12 +5,20 @@
     </head>
     <body>
         <h1>Please Sign Up</h1>
-        <form action = "http://127.0.0.1:5000/validate" method = "POST">
-            <label for="fname">Name:</label><br>
+        <form action = "http://127.0.0.1:5000/validatesignup" method = "POST">
+            <label for="fname">First name:</label><br>
             <input type="text" id="fname" name="fname"><br>
-            <label for="age">Password:</label><br>
-            <input type="text" id="password" name="password"><br>
-            <label for="sub">Submit</label><br>
+            <label for="fname">Last name:</label><br>
+            <input type="text" id="lname" name="lname"><br>
+            <label for="email">Email address:</label><br>
+            <input type="text" id="email" name="email"><br>
+            <label for="phone">Phone number (not required):</label><br>
+            <input type="text" id="phone" name="phone"><br>
+            <label for="school">School name:</label><br>
+            <input type="text" id="school" name="school"><br>
+            <label for="password">Create a password:</label><br>
+            <input type ="text" id="password" name = "password"><br>
+            <label for="sub">Submit:</label><br>
             <input type="submit" id="sub" name="sub"><br> 
     
         </form>
