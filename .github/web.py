@@ -7,6 +7,16 @@ from Item import *
 app = Flask(__name__)
 
 
+def login_validate(email, password):
+    users = DB.collection(u'Users').stream()
+    for user in users:
+        print(dir(user))
+        if user.get('password') == password and user.get('email') == email:
+            return True, user.id
+    return False, user.id
+
+
+
 @app.route('/')
 def splash(): 
     return render_template('index.html')
@@ -19,20 +29,23 @@ def login():
 def signup():
 	return render_template("signup.html")
 
-@app.route('/error')
-def error():
-    return render_template('error.html')
+@app.route('/loginerror')
+def loginerror():
+    return render_template('loginerror.html')
+
+@app.route('/signuperror')
+def signuperror():
+    return render_template("loginerror.html")
 
 @app.route('/validatelogin', methods = ['POST', 'GET'])
 def validate_login():
    if request.method == 'POST':
-       if (len(request.form['email']) != 0 and len(request.form['password']) != 0): #validation TODO
-            user = request.form['email']
-            password = request.form['password']
-            return userhome(user)
+       valid, userid = login_validate(request.form['email'], request.form['password'])
+       if valid: 
+            return redirect(url_for("userhome",userid=userid))
        else: 
-            error = "Invalid input data"
-            return redirect(url_for('error'))
+            error = "Incorrect username or password"
+            return redirect(url_for('loginerror'))
    
    return redirect(url_for('error'))
 
@@ -41,18 +54,18 @@ def validate_signup():
    if request.method == 'POST':
        if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
             error = "Invalid input data"
-            return redirect(url_for('error'))
+            return redirect(url_for('signuperror'))
        else: 
-            user=User(request.form['fname'],request.form['lname'],request.form['email'],request.form['school'],request.form['phone'],request.form['password'])
-            DB.collection(u'Users').add(user.to_dict()) 
-            
-            return userhome(user)
+            user=User(request.form['fname'],request.form['lname'],request.form['email'],request.form['password'],request.form['school'],request.form['phone'])
+            DB.collection(u'Users').add(user.to_dict())   
+            return redirect(url_for("login")) #user must log in after creating account
    
    return redirect(url_for('error'))
 
-@app.route("/home/<userid>")#displays unique homepage for user
-def userhome(user):
-    return render_template("userhome.html")
+@app.route("/userhome/<userid>")#displays unique homepage
+def userhome(userid):
+    first_name = DB.collection(u'Users').document(userid).get().get('fname')
+    return render_template("userhome.html", user_id=userid, name=first_name)
 
 @app.route("/list/<userid>") # list an item yourself here
 def list():
