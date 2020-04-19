@@ -12,7 +12,9 @@ def get_all_items():
   items = DB.collection(u'Items').stream()
   items_list = []
   for item in items:
-    items_list.append(item.to_dict())
+    item_dict = item.to_dict()
+    item_dict.update({'id':item.id})
+    items_list.append(item_dict)
   return items_list
 
 def login_validate(email, password):
@@ -52,7 +54,7 @@ def validate_login():
        else: 
             error = "Incorrect username or password"
             return redirect(url_for('loginerror'))
-            
+
    return redirect(url_for('error'))
 
 @app.route('/validatesignup', methods = ['POST', 'GET'])
@@ -82,9 +84,10 @@ def list():
 	"""
 	return render_template("list.html")
 
-@app.route("/item/<userid>/<item>") # view an item listing
-def listing(item):
-	return render_template("listing.html",item=item)
+@app.route("/item/<userid>/<itemid>") # view an item listing
+def item(itemid):
+
+	return render_template("item.html",itemid=itemid)
 
 
 if __name__ == '__main__':
