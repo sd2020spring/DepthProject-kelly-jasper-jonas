@@ -80,21 +80,18 @@ def userhome(userid):
 def list():
 	"""List an item to the marketplace
 	- will probably be an html form
-
 	"""
 	return render_template("list.html")
 
 @app.route("/item/<userid>/<itemid>") # view an item listing
-def item(itemid):
-
-	return render_template("item.html",itemid=itemid)
+def item(userid, itemid):
+	return render_template("item.html",itemid=itemid, user_id=userid)
 
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
     cred = credentials.Certificate('ServiceAccountKey.json')
     firebase_admin.initialize_app(cred)
-    
 
     # Initialize the client for interfacing with the database
     DB = firestore.client()
