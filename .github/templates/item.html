@@ -5,6 +5,21 @@
     </head>
     <body>
         <h1>Item listing page</h1>
-        <a href="/userhome">Back to Browse</a>
+        <table style="width:100%">
+          <tr>
+            <th>Date Posted</th>
+            <th>Item Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Seller</th>
+          <tr>
+            <td>{{item['Day posted']}}</a></td> 
+            <td>{{item['name']}}</td>
+            <td>{{item['description']}}</td>
+            <td>{{item['price']}}</td>
+            <td>{{item['seller']}}</td>
+          </tr>
+        </table> 
+        <a href="/userhome/{{user_id}}">Back to Browse</a>
     </body>
 </html>

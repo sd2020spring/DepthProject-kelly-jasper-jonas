@@ -85,7 +85,8 @@ def list():
 
 @app.route("/item/<userid>/<itemid>") # view an item listing
 def item(userid, itemid):
-	return render_template("item.html",itemid=itemid, user_id=userid)
+  item = DB.collection(u'Items').document(itemid).get().to_dict()
+  return render_template("item.html", item=item, itemid=itemid, user_id=userid)
 
 
 if __name__ == '__main__':
