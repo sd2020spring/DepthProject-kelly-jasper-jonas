@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 from User import *
 from Item import *
 
@@ -20,10 +22,16 @@ def get_all_items():
 def login_validate(email, password):
     users = DB.collection(u'Users').stream()
     for user in users:
-        print(dir(user))
         if user.get('password') == password and user.get('email') == email:
             return True, user.id
     return False, user.id
+
+def check_email(email): #checks if the email a user is signing up with is in the approved list (makes sure they're a student)
+    emails = DB.collection(u'Emails').stream()
+    for e in emails:
+        if email == e.get('email') and not e.get('taken'):
+            return True
+    return False
 
 @app.route('/')
 def splash(): 
@@ -60,15 +68,20 @@ def validate_login():
 @app.route('/validatesignup', methods = ['POST', 'GET'])
 def validate_signup():
    if request.method == 'POST':
-       if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
-            error = "Invalid input data"
+       if 0 not in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
+            if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
+                user=User(request.form['fname'],request.form['lname'],request.form['email'],request.form['password'],request.form['school'],request.form['phone'])
+                DB.collection(u'Users').add(user.to_dict())   
+                return redirect(url_for("login")) #user must log in after creating account
+            else:
+                error = "invalid email or password confirmation"
+                redirect(url_for('signuperror'))
+       else:
+            error = "Missing fields"
             return redirect(url_for('signuperror'))
-       else: 
-            user=User(request.form['fname'],request.form['lname'],request.form['email'],request.form['password'],request.form['school'],request.form['phone'])
-            DB.collection(u'Users').add(user.to_dict())   
-            return redirect(url_for("login")) #user must log in after creating account
+            
    
-   return redirect(url_for('error'))
+   return redirect(url_for('signuperror'))
 
 @app.route("/userhome/<userid>")#displays unique homepage
 def userhome(userid):
