@@ -5,9 +5,10 @@ selling items across college campuses.
 
 @author(s): 
 Jasper Katzban, Olin '23
+Jonas Kazlauskas, Olin '23
+Kelly Yen, Olin '23
 """
 
-import numpy as np
 from datetime import datetime
 
 class Item:
@@ -25,6 +26,7 @@ class Item:
 		self.seller = user.name
 		self.tags = tags
 		self.post_date = datetime.now()
+		self.available = True
 
 	def to_dict(self):
 
@@ -36,6 +38,7 @@ class Item:
             'seller' : self.seller,
             'tags' : self.tags,
             'post_date' : self.post_date,
+			'available' : self.available,
         }
 		
 		return items_dict

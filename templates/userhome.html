@@ -19,7 +19,7 @@
             <th>Seller</th>
         {% for item in items %}
           <tr>
-            <td><a href="/item/{{ user_id }}/{{ item['id'] }}">{{item['Day posted']}}</a></td> 
+            <td><a href="/item/{{ item['id'] }}">{{item['Day posted']}}</a></td> 
             <td>{{item['name']}}</td>
             <td>{{item['description']}}</td>
             <td>{{item['price']}}</td>
@@ -27,6 +27,6 @@
           </tr>
         {% endfor %}
         </table> 
-        <a href="/">Sign out here</a>
+        <a href="/logout">Sign out here</a>
     </body>
 </html>

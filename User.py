@@ -5,7 +5,10 @@ selling items across college campuses.
 
 @author(s): 
 Jasper Katzban, Olin '23
+Jonas Kazlauskas, Olin '23
+Kelly Yen, Olin '23
 """
+
 
 import numpy as np
 from datetime import datetime
@@ -26,6 +29,7 @@ class User:
 		self.items_sold = []
 		self.looking_for = []
 		self.purchases = []
+		self.saved_items = []
 
 	def to_dict(self):
 		
@@ -39,6 +43,7 @@ class User:
 			'items selling' : self.items_sold,
 			'looking for' : self.looking_for,
 			'previous purchase' : self.purchases,
+			'saved items' : self.saved_items,
 		}
 		return user_dict
 
