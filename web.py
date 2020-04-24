@@ -24,21 +24,28 @@ app.secret_key="JKKYJK"
 app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
 
 def get_all_items():
-  '''Gets all the items in Items DB
-     Returns them as a list of dictionaries'''
-  items = DB.collection(u'Items').stream()
-  items_list = []
-  for item in items:
+    '''
+    Gathers all the items in the DB
+
+    Returns:
+            All DB items in a list of dictionaries
+    '''
+    items = DB.collection(u'Items').stream()
+    items_list = []
+    for item in items:
     item_dict = item.to_dict()
     item_dict.update({'id':item.id})
     items_list.append(item_dict)
-  return items_list
+    return items_list
 
 def login_validate(email, password):
-    ''' validates login by checking for matching email and password
-        Returns:
-        -True/False: whether login credentials are valid
-        -user.id: id of user '''
+    ''' 
+    Validates login by checking for matching email and password
+    
+    Returns:
+            -True/False: whether login credentials are valid
+            -user.id: id of user 
+    '''
 
     users = DB.collection(u'Users').stream()
     for user in users:
@@ -47,8 +54,12 @@ def login_validate(email, password):
     return False, user.id
 
 def check_email(email): 
-    '''checks if the email a user is signing up with is approved (whether they're a student or not)
-        Returns True of email is approved and not taken, returns False otherwise'''
+    '''
+    Checks if the email a user is signing up with is approved (whether they're a student or not)
+
+    Returns:
+            True of email is approved and not taken, False otherwise
+    '''
     emails = DB.collection(u'Emails').stream()
     for e in emails:
         if email == e.get('email') and not e.get('taken'):
@@ -57,7 +68,7 @@ def check_email(email):
 
 @app.route('/')
 def splash(): 
-    '''displays the landing page and prompts user to sign up or log in'''
+    '''Displays the landing page and prompts user to sign up or log in'''
     return render_template('index.html')
 
 @app.route('/login')
@@ -85,7 +96,8 @@ def signuperror():
 
 @app.route('/validatelogin', methods = ['POST', 'GET'])
 def validate_login():
-    '''validates a user's log in
+    '''
+    Validates a user's log in
     if user provided valid credentials, renders the userhome page, otherwise redirects to login error'''
     if request.method == 'POST':
        valid, userid = login_validate(request.form['email'], request.form['password'])
