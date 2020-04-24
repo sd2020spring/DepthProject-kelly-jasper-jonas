@@ -214,4 +214,4 @@ if __name__ == '__main__':
     # except google.cloud.exceptions.NotFound:
     #     print(u'Missing data')
         
-    app.run()
+    app.run(debug=True)
