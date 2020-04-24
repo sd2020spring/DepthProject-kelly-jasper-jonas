@@ -57,7 +57,7 @@ def check_email(email):
     Checks if the email a user is signing up with is approved (whether they're a student or not)
 
     Returns:
-            True of email is approved and not taken, False otherwise
+            True if email is approved and not taken, False otherwise
     '''
     emails = DB.collection(u'Emails').stream()
     for e in emails:
@@ -156,13 +156,16 @@ def edituser():
             if request.form['password'] != request.form['confirmpass']:
                 error = 'New passwords do not match!'
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
-            user_info=User(request.form['fname']
-                              request.form['lname'],
-                              request.form['email'],
-                              password,
-                              request.form['school'],
-                              request.form['phone'])
-            user_ref.set(user_info.to_dict(), merge = True)
+            if check_email(request.form['email']):
+                user_info=User(request.form['fname'],
+                               request.form['lname'],
+                               request.form['email'],
+                               password,
+                               request.form['school'],
+                               request.form['phone'])
+                user_ref.set(user_info.to_dict(), merge = True)
+            else:
+                error = 'Invalid Email'
         return render_template("edituser.html", user_id=userid, user_info=user_info)
     else:
         return redirect(url_for("login"))
