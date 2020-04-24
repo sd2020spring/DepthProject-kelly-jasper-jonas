@@ -11,6 +11,7 @@ Kelly Yen, Olin '23
 
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_bootstrap import Bootstrap
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
 from werkzeug.utils import secure_filename
