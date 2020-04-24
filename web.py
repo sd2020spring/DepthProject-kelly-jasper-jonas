@@ -10,7 +10,7 @@ Kelly Yen, Olin '23
 """
 
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
 from werkzeug.utils import secure_filename
@@ -33,9 +33,9 @@ def get_all_items():
     items = DB.collection(u'Items').stream()
     items_list = []
     for item in items:
-    item_dict = item.to_dict()
-    item_dict.update({'id':item.id})
-    items_list.append(item_dict)
+        item_dict = item.to_dict()
+        item_dict.update({'id':item.id})
+        items_list.append(item_dict)
     return items_list
 
 def login_validate(email, password):
@@ -46,7 +46,6 @@ def login_validate(email, password):
             -True/False: whether login credentials are valid
             -user.id: id of user 
     '''
-
     users = DB.collection(u'Users').stream()
     for user in users:
         if user.get('password') == password and user.get('email') == email:
@@ -126,8 +125,7 @@ def validate_signup():
        else:
             error = "Missing fields"
             return redirect(url_for('signuperror'))
-            
-   
+
     return redirect(url_for('signuperror'))
 
 @app.route("/userhome")
@@ -140,7 +138,35 @@ def userhome():
         return render_template("userhome.html", user_id=userid, name=first_name, items = items)
     else:
         return redirect(url_for("login"))
-    
+
+@app.route("/edituser", methods=['POST', 'GET'])
+def edituser():
+    '''Displays form for user to edit their information'''
+    if 'userid' in session:
+        userid = session['userid']
+        user_info = DB.collection(u'Users').document(userid).get().to_dict()
+        if request.method == 'POST':
+            #User info changed
+            user_ref = DB.collection(u'Users').document(userid)
+            password = request.form['password']
+            #Check if password was changed
+            if len(request.form['password']) == 0:
+                password = DB.collection(u'Users').document(userid).get().get('password')
+            #Check if passwords match
+            if request.form['password'] != request.form['confirmpass']:
+                error = 'New passwords do not match!'
+                return render_template("edituser.html", user_id=userid, user_info=user_info)
+            user_info=User(request.form['fname']
+                              request.form['lname'],
+                              request.form['email'],
+                              password,
+                              request.form['school'],
+                              request.form['phone'])
+            user_ref.set(user_info.to_dict(), merge = True)
+        return render_template("edituser.html", user_id=userid, user_info=user_info)
+    else:
+        return redirect(url_for("login"))
+
 @app.route("/logout")
 def logout():
     '''log out of session and redirects to log in page'''
