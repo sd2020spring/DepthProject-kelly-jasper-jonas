@@ -147,6 +147,9 @@ def edituser():
         userid = session['userid']
         user_info = DB.collection(u'Users').document(userid).get().to_dict()
         if request.method == 'POST':
+            if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school'])}:
+                flash(u'Oops! Name, email, and school name are required!', 'error')
+                return render_template("edituser.html", user_id=userid, user_info=user_info)
             #User info changed
             user_ref = DB.collection(u'Users').document(userid)
             password = request.form['password']
@@ -155,7 +158,7 @@ def edituser():
                 password = DB.collection(u'Users').document(userid).get().get('password')
             #Check if passwords match
             if request.form['password'] != request.form['confirmpass']:
-                error = 'New passwords do not match!'
+                flash(u'Oops! New passwords do not match!', 'error')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
             if check_email(request.form['email']):
                 user_info=User(request.form['fname'],
@@ -165,8 +168,9 @@ def edituser():
                                request.form['school'],
                                request.form['phone'])
                 user_ref.set(user_info.to_dict(), merge = True)
+                flash('Your information was succesfully updated')
             else:
-                error = 'Invalid Email'
+                flash(u'Invalid Email', 'error')
         return render_template("edituser.html", user_id=userid, user_info=user_info)
     else:
         return redirect(url_for("login"))
