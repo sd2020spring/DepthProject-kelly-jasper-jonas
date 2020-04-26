@@ -10,7 +10,8 @@ Kelly Yen, Olin '23
 """
 
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_bootstrap import Bootstrap
 import firebase_admin
 from firebase_admin import credentials, firestore, auth, storage
 from werkzeug.utils import secure_filename
@@ -24,22 +25,28 @@ app.secret_key="JKKYJK"
 app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
 
 def get_all_items():
-  '''Gets all the items in Items DB
-     Returns them as a list of dictionaries'''
-  items = DB.collection(u'Items').stream()
-  items_list = []
-  for item in items:
-    item_dict = item.to_dict()
-    item_dict.update({'id':item.id})
-    items_list.append(item_dict)
-  return items_list
+    '''
+    Gathers all the items in the DB
 
-def login_validate(email, password_attempt):
-    ''' validates login by checking for matching email and password
-        Returns:
-        -True/False: whether login credentials are valid
-        -user.id: id of user '''
+    Returns:
+            All DB items in a list of dictionaries
+    '''
+    items = DB.collection(u'Items').stream()
+    items_list = []
+    for item in items:
+        item_dict = item.to_dict()
+        item_dict.update({'id':item.id})
+        items_list.append(item_dict)
+    return items_list
 
+def login_validate(email, password):
+    ''' 
+    Validates login by checking for matching email and password
+    
+    Returns:
+            -True/False: whether login credentials are valid
+            -user.id: id of user 
+    '''
     users = DB.collection(u'Users').stream()
     for user in users:
         if check_password_hash(user.get('password'), password_attempt) and user.get('email') == email:
@@ -47,8 +54,12 @@ def login_validate(email, password_attempt):
     return False, user.id
 
 def check_email(email): 
-    '''checks if the email a user is signing up with is approved (whether they're a student or not)
-        Returns True of email is approved and not taken, returns False otherwise'''
+    '''
+    Checks if the email a user is signing up with is approved (whether they're a student or not)
+
+    Returns:
+            True if email is approved and not taken, False otherwise
+    '''
     emails = DB.collection(u'Emails').stream()
     for e in emails:
         if email == e.get('email') and not e.get('taken'):
@@ -57,7 +68,7 @@ def check_email(email):
 
 @app.route('/')
 def splash(): 
-    '''displays the landing page and prompts user to sign up or log in'''
+    '''Displays the landing page and prompts user to sign up or log in'''
     return render_template('index.html')
 
 @app.route('/login')
@@ -85,7 +96,8 @@ def signuperror():
 
 @app.route('/validatelogin', methods = ['POST', 'GET'])
 def validate_login():
-    '''validates a user's log in
+    '''
+    Validates a user's log in
     if user provided valid credentials, renders the userhome page, otherwise redirects to login error'''
     if request.method == 'POST':
        valid, userid = login_validate(request.form['email'], request.form['password'])
@@ -119,8 +131,7 @@ def validate_signup():
        else:
             error = "Missing fields"
             return redirect(url_for('signuperror'))
-            
-   
+
     return redirect(url_for('signuperror'))
 
 @app.route('/validatelisting', methods = ['POST', 'GET'])
@@ -140,7 +151,42 @@ def userhome():
         return render_template("userhome.html", user_id=userid, name=first_name, items = items)
     else:
         return redirect(url_for("login"))
-    
+
+@app.route("/edituser", methods=['POST', 'GET'])
+def edituser():
+    '''Displays form for user to edit their information'''
+    if 'userid' in session:
+        userid = session['userid']
+        user_info = DB.collection(u'Users').document(userid).get().to_dict()
+        if request.method == 'POST':
+            if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school'])}:
+                flash(u'Oops! Name, email, and school name are required!', 'error')
+                return render_template("edituser.html", user_id=userid, user_info=user_info)
+            #User info changed
+            user_ref = DB.collection(u'Users').document(userid)
+            password = request.form['password']
+            #Check if password was changed
+            if len(request.form['password']) == 0:
+                password = DB.collection(u'Users').document(userid).get().get('password')
+            #Check if passwords match
+            if request.form['password'] != request.form['confirmpass']:
+                flash(u'Oops! New passwords do not match!', 'error')
+                return render_template("edituser.html", user_id=userid, user_info=user_info)
+            if check_email(request.form['email']):
+                user_info=User(request.form['fname'],
+                               request.form['lname'],
+                               request.form['email'],
+                               password,
+                               request.form['school'],
+                               request.form['phone'])
+                user_ref.set(user_info.to_dict(), merge = True)
+                flash('Your information was succesfully updated')
+            else:
+                flash(u'Invalid Email', 'error')
+        return render_template("edituser.html", user_id=userid, user_info=user_info)
+    else:
+        return redirect(url_for("login"))
+
 @app.route("/logout")
 def logout():
     '''log out of session and redirects to log in page'''
@@ -190,4 +236,4 @@ if __name__ == '__main__':
     # except google.cloud.exceptions.NotFound:
     #     print(u'Missing data')
         
-    app.run()
+    app.run(debug=True)

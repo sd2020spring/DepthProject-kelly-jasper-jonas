@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+    <head>
+    </head>
+    <body>
+        <h1>Edit Profile Information</h1>
+        <a href="/userhome">Back to home</a>
+        <form action = "/edituser" method = "POST">
+            <label for="fname">New first name:</label><br>
+            <input type="text" id="fname" name="fname" value="{{user_info['fname']}}"><br>
+            <label for="fname">New last name:</label><br>
+            <input type="text" id="lname" name="lname" value="{{user_info['lname']}}"><br>
+            <label for="email">New email address:</label><br>
+            <input type="text" id="email" name="email" value="{{user_info['email']}}"><br>
+            <label for="phone">New phone number:</label><br>
+            <input type="text" id="phone" name="phone" value="{{user_info['phone']}}"><br>
+            <label for="school">New school name:</label><br>
+            <input type="text" id="school" name="school" value="{{user_info['school']}}"><br>
+            <label for="password">New password:</label><br>
+            <input type ="text" id="password" name = "password"><br>
+            <label for="confirmpass">Confirm new password:</label><br>
+            <input type ="text" id="confirmpass" name = "confirmpass"><br>
+            <label for="sub">Submit:</label><br>
+            <input type="submit" id="sub" name="sub"><br> 
+        </form>
+        <p>Note: Passwords will not be shown</p>
+    </body>
+{% endblock %}
