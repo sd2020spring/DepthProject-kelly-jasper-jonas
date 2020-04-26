@@ -34,7 +34,7 @@ def get_all_items():
     items_list.append(item_dict)
   return items_list
 
-def login_validate(email, password):
+def login_validate(email, password_attempt):
     ''' validates login by checking for matching email and password
         Returns:
         -True/False: whether login credentials are valid
@@ -42,7 +42,7 @@ def login_validate(email, password):
 
     users = DB.collection(u'Users').stream()
     for user in users:
-        if user.get('password') == password and user.get('email') == email:
+        if check_password_hash(user.get('password'), password_attempt) and user.get('email') == email:
             return True, user.id
     return False, user.id
 
@@ -105,10 +105,15 @@ def validate_signup():
     if request.method == 'POST':
        if 0 not in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
             if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
-                user=User(request.form['fname'],request.form['lname'],request.form['email'],request.form['password'],request.form['school'],request.form['phone'])
+                
+                hashed = generate_password_hash(request.form['password'])
+
+                user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
                 DB.collection(u'Users').add(user.to_dict())   
+
                 return redirect(url_for("login")) #user must log in after creating account
             else:
+
                 error = "Invalid email or password confirmation"
                 redirect(url_for('signuperror'))
        else:
@@ -117,6 +122,13 @@ def validate_signup():
             
    
     return redirect(url_for('signuperror'))
+
+@app.route('/validatelisting', methods = ['POST', 'GET'])
+def validate_listing():
+    if request.method == 'POST':
+        pass
+    pass
+
 
 @app.route("/userhome")
 def userhome():
@@ -159,10 +171,15 @@ def item(itemid):
 if __name__ == '__main__':
     # Configures database and gets access to the database
     cred = credentials.Certificate('ServiceAccountKey.json')
-    firebase_admin.initialize_app(cred)
+
+    firebase_admin.initialize_app(cred, {
+    'storageBucket': 'depth-project-jkjkky.appspot.com'
+    })
 
     # Initialize the client for interfacing with the database
     DB = firestore.client()
+    bucket = storage.bucket()
+
 
     #test if firebase connection is working
     # doc_ref = DB.collection(u'Users').limit(1)

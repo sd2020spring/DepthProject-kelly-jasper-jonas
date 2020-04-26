@@ -30,6 +30,7 @@ class User:
 		self.looking_for = []
 		self.purchases = []
 		self.saved_items = []
+		self.pic = ''
 
 	def to_dict(self):
 		
@@ -44,6 +45,7 @@ class User:
 			'looking for' : self.looking_for,
 			'previous purchase' : self.purchases,
 			'saved items' : self.saved_items,
+			'profile picture' : self.pic, 
 		}
 		return user_dict
 
