@@ -28,10 +28,10 @@
             <td>
             <form action='/userhome' method='POST'>
                 {% if item['id'] in user_saved %}
-                    <input type="hidden"  name="itemd" value="{{item['id']}}">
+                    <input type="hidden"  name="itemid" value="{{item['id']}}">
                     <input type="submit" value="Saved">
                 {% else %}
-                    <input type="hidden" name="itemd" value="{{item['id']}}">
+                    <input type="hidden" name="itemid" value="{{item['id']}}">
                     <input type="submit" value='Save'>
                 {% endif %}
             </form>

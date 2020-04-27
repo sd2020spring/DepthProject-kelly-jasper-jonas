@@ -20,9 +20,12 @@
             <input type ="text" id="password" name = "password"><br>
             <label for="confirmpass">Confirm new password:</label><br>
             <input type ="text" id="confirmpass" name = "confirmpass"><br>
-            <label for="sub">Submit:</label><br>
-            <input type="submit" id="sub" name="sub"><br> 
+            <input type="submit" id="sub" name="sub" value = 'Update'><br> 
+        <p>Note: Passwords will not be shown</p><br>
+        <p>Enter your current password and hit delete to permanently delete your profile</p>
+            <label for="delpass">Current password:</label><br>
+            <input type ="text" id="delpass" name = "delpass"><br>
+            <input type="submit" id="sub" name="sub" value="Delete"><br> 
         </form>
-        <p>Note: Passwords will not be shown</p>
     </body>
 {% endblock %}

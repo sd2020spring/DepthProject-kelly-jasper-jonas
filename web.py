@@ -147,7 +147,7 @@ def validate_listing():
 
 @app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
-    '''displays the user homepage, which consists of item listings and navbar'''
+    '''Displays the user homepage, which consists of item listings and navbar'''
     if "userid" in session:
         userid = session['userid']
         user_ref = DB.collection(u'Users').document(userid)
@@ -157,12 +157,14 @@ def userhome():
 
         #If an item is saved/unsaved
         if request.method == 'POST':
-            item = request.form['itemd']
+            item = request.form['itemid']
+
             #Add it to saved list
             if item not in user_saved:
                 user_saved.append(item)
                 user_ref.set({'saved_items':user_saved}, merge=True)
                 flash('Saved to your profile')
+
             #Remove it from saved list
             else:
                 user_saved.remove(item)
@@ -178,21 +180,32 @@ def edituser():
     '''Displays form for user to edit their information'''
     if 'userid' in session:
         userid = session['userid']
-        user_info = DB.collection(u'Users').document(userid).get().to_dict()
+        user_ref = DB.collection(u'Users').document(userid)
+        user_info = user_ref.get().to_dict()
         if request.method == 'POST':
+
+            #Delete Profile
+            if request.form['sub'] == 'Delete':
+                if check_password_hash(user_ref.get().get('password'), request.form['delpass']):
+                    user_ref.delete()
+                    session.clear()
+                    flash('Profile deleted')
+                    return redirect(url_for('splash'))
+
+            #Change user info
             if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school'])}:
                 flash(u'Oops! Name, email, and school name are required!', 'error')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
-            #User info changed
-            user_ref = DB.collection(u'Users').document(userid)
-            password = request.form['password']
             #Check if password was changed
             if len(request.form['password']) == 0:
                 password = DB.collection(u'Users').document(userid).get().get('password')
+            else:
+                password = request.form['password']
             #Check if passwords match
             if request.form['password'] != request.form['confirmpass']:
                 flash(u'Oops! New passwords do not match!', 'error')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
+            #Verify email
             if check_email(request.form['email']):
                 user_info=User(request.form['fname'],
                                request.form['lname'],
@@ -204,6 +217,7 @@ def edituser():
                 flash('Your information was succesfully updated')
             else:
                 flash(u'Invalid Email', 'error')
+
         return render_template("edituser.html", user_id=userid, user_info=user_info)
     else:
         return redirect(url_for("login"))
