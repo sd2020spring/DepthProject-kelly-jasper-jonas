@@ -9,7 +9,8 @@ Jonas Kazlauskas, Olin '23
 Kelly Yen, Olin '23
 """
 
-
+import os
+import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap
 import firebase_admin
@@ -66,6 +67,39 @@ def check_email(email):
             return True
     return False
 
+def get_media_link(filename):
+    image_blob = bucket.get_blob(filename)
+    image_blob.make_public()
+    return image_blob.media_link
+
+def get_uploaded_images(images):
+    uploaded_images = []
+    for image in images:
+        uploaded_images.append(get_image(image))
+
+    return uploaded_images
+
+def get_image(image):
+    
+    unique = str(uuid.uuid4())
+
+    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+    image.save(image_filepath)
+    print(image.filename)
+
+    new = str(app.config['UPLOAD_FOLDER'] + "/" + unique + ".png")
+    os.rename(image_filepath, new)
+    
+    
+    blob = bucket.blob(new)
+    blob.upload_from_filename(new)
+
+    # Deletes image from local directory after it was uploaded
+    os.remove(new)
+
+    return get_media_link(new)
+
+
 @app.route('/')
 def splash(): 
     '''Displays the landing page and prompts user to sign up or log in'''
@@ -115,30 +149,38 @@ def validate_login():
 def validate_signup():
     '''validates sign up by checking to make sure all fields are filled out properly, email belongs to a student, and password matches confirmed password'''
     if request.method == 'POST':
-       if 0 not in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
-            if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
-                
-                hashed = generate_password_hash(request.form['password'])
+        if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
+            
+            hashed = generate_password_hash(request.form['password'])
 
-                user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
-                DB.collection(u'Users').add(user.to_dict())   
+            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
+            DB.collection(u'Users').add(user.to_dict())   
 
-                return redirect(url_for("login")) #user must log in after creating account
-            else:
+            return redirect(url_for("login")) #user must log in after creating account
+        else:
 
-                error = "Invalid email or password confirmation"
-                redirect(url_for('signuperror'))
-       else:
-            error = "Missing fields"
-            return redirect(url_for('signuperror'))
-
+            error = "Invalid email or password confirmation"
+            redirect(url_for('signuperror'))
     return redirect(url_for('signuperror'))
 
 @app.route('/validatelisting', methods = ['POST', 'GET'])
 def validate_listing():
     if request.method == 'POST':
+        userid = session['userid']
+
+        new_item = Item(
+            request.form['name'], 
+            request.form['price'], 
+            request.form['description'], 
+            get_uploaded_images(request.files.getlist('pictures')), 
+            request.form['quality'], 
+            userid)
+
+        DB.collection(u'Items').add(new_item.to_dict())
+        return redirect(url_for('userhome'))
+    else:
         pass
-    pass
+
 
 
 @app.route("/userhome")
@@ -210,9 +252,7 @@ def item(itemid):
         item = DB.collection(u'Items').document(itemid).get().to_dict()
         return render_template("item.html", item=item, itemid=itemid)
     else:
-        return redirect(url_for("login")) 
-    
-
+        return redirect(url_for("login"))
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
@@ -226,6 +266,10 @@ if __name__ == '__main__':
     DB = firestore.client()
     bucket = storage.bucket()
 
+    UPLOAD_FOLDER = os.getcwd()
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
+
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #test if firebase connection is working
     # doc_ref = DB.collection(u'Users').limit(1)

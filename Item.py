@@ -23,7 +23,7 @@ class Item:
 		self.price = price
 		self.description = description
 		self.images = images
-		self.seller = user.name
+		self.seller = user
 		self.tags = tags
 		self.quality = quality
 		self.post_date = datetime.now()

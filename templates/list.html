@@ -6,7 +6,7 @@
     <body>
         <h1>List an Item!</h1>
         <a href="/userhome">home</a>
-        <form action = "http://127.0.0.1:5000/validatelisting" method = "POST">
+        <form action = "http://127.0.0.1:5000/validatelisting" method = "POST" enctype='multipart/form-data'>
             <label for="name">Item name</label><br>
             <input type="text" id="name" name="name"><br>
             <label for="description">Description</label><br>
@@ -15,19 +15,14 @@
             <input type="number" id="price" name="price"><br>
 
             <p>Quality</p>
-            <input type="radio" id="new" name="quality" value="new">
-            <label for="new">Brand new</label><br>
-            <input type="radio" id="lused" name="quality" value="lused">
-            <label for="lused">Lightly used</label><br>
-            <input type="radio" id="used" name="quality" value="used">
-            <label for="used">Used</label><br>
-            <input type="radio" id="hused" name="quality" value="hused">
-            <label for="hused">Heavily used</label><br>
-            <input type="radio" id="fix" name="quality" value="fix">
-            <label for="fix">You'll need to make some repairs</label><br>
+            <label><input type="radio" required='true' id="quality" name="quality" value="new">Brand New</label><br>
+            <label><input type="radio" id="quality" name="quality" value="lightly_used">Lightly Used</label><br>
+            <label><input type="radio" id="quality" name="quality" value="used">Used</label><br>
+            <label><input type="radio" id="quality" name="quality" value="heavily_used">Heavily used</label><br>
+            <label><input type="radio" id="quality" name="quality" value="fix">ou'll need to repair it</label><br>
 
             <label for="picture">Picture</label><br>
-            <input type="file" id="picture" name="picture" accept="image/png, image/jpeg"><br>
+            <input type="file" multiple = "true" id="pictures" name="pictures" accept="image/png, image/jpeg"><br>
             <label for="sub">Submit:</label><br>
             <input type="submit" id="sub" name="sub"><br> 
     
