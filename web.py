@@ -66,10 +66,21 @@ def check_email(email):
             return True
     return False
 
-def save_item(itemid):
+def save_item(itemid, userid):
     '''
-    Adds item to user saved list in DB
+    Adds or removes item to user saved list in DB
     '''
+    user_ref = DB.collection(u'Users').document(userid)
+    user_saved = user_ref.get().get('saved_items')
+    if itemid not in user_saved:
+        user_saved.append(itemid)
+        user_ref.set({'saved_items':user_saved}, merge=True)
+        flash('Saved to your profile')
+    else:
+        user_saved.remove(itemid)
+        user_ref.set({'saved_items':user_saved}, merge=True)
+        flash('Removed from your profile')
+    return None
 
 @app.route('/')
 def splash(): 
@@ -152,24 +163,12 @@ def userhome():
         userid = session['userid']
         user_ref = DB.collection(u'Users').document(userid)
         first_name = user_ref.get().get('fname')
-        user_saved = user_ref.get().get('saved_items')
         items = get_all_items()
 
         #If an item is saved/unsaved
         if request.method == 'POST':
-            item = request.form['itemid']
-
-            #Add it to saved list
-            if item not in user_saved:
-                user_saved.append(item)
-                user_ref.set({'saved_items':user_saved}, merge=True)
-                flash('Saved to your profile')
-
-            #Remove it from saved list
-            else:
-                user_saved.remove(item)
-                user_ref.set({'saved_items':user_saved}, merge=True)
-                flash('Removed from your profile')
+            save_item(request.form['itemid'], userid)
+        user_saved = user_ref.get().get('saved_items')
 
         return render_template("userhome.html", user_id=userid, name=first_name, items=items, user_saved=user_saved)
     else:
