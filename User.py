@@ -44,7 +44,7 @@ class User:
 			'items selling' : self.items_sold,
 			'looking for' : self.looking_for,
 			'previous purchase' : self.purchases,
-			'saved items' : self.saved_items,
+			'saved_items' : self.saved_items,
 			'profile picture' : self.pic, 
 		}
 		return user_dict

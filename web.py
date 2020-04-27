@@ -49,7 +49,7 @@ def login_validate(email, password):
     '''
     users = DB.collection(u'Users').stream()
     for user in users:
-        if check_password_hash(user.get('password'), password_attempt) and user.get('email') == email:
+        if check_password_hash(user.get('password'), password) and user.get('email') == email:
             return True, user.id
     return False, user.id
 
@@ -65,6 +65,11 @@ def check_email(email):
         if email == e.get('email') and not e.get('taken'):
             return True
     return False
+
+def save_item(itemid):
+    '''
+    Adds item to user saved list in DB
+    '''
 
 @app.route('/')
 def splash(): 
@@ -106,7 +111,7 @@ def validate_login():
             session['userid'] = userid
             return redirect(url_for("userhome"))
        else: 
-            error = "Incorrect username or password"
+            flash("Incorrect username or password", 'error')
             return redirect(url_for('loginerror'))
         
     return redirect(url_for('error'))
@@ -126,10 +131,10 @@ def validate_signup():
                 return redirect(url_for("login")) #user must log in after creating account
             else:
 
-                error = "Invalid email or password confirmation"
+                flash("Invalid email or password confirmation", 'error')
                 redirect(url_for('signuperror'))
        else:
-            error = "Missing fields"
+            flash("Missing fields", 'error')
             return redirect(url_for('signuperror'))
 
     return redirect(url_for('signuperror'))
@@ -140,15 +145,31 @@ def validate_listing():
         pass
     pass
 
-
-@app.route("/userhome")
+@app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
     '''displays the user homepage, which consists of item listings and navbar'''
     if "userid" in session:
         userid = session['userid']
-        first_name = DB.collection(u'Users').document(userid).get().get('fname')
+        user_ref = DB.collection(u'Users').document(userid)
+        first_name = user_ref.get().get('fname')
+        user_saved = user_ref.get().get('saved_items')
         items = get_all_items()
-        return render_template("userhome.html", user_id=userid, name=first_name, items = items)
+
+        #If an item is saved/unsaved
+        if request.method == 'POST':
+            item = request.form['itemd']
+            #Add it to saved list
+            if item not in user_saved:
+                user_saved.append(item)
+                user_ref.set({'saved_items':user_saved}, merge=True)
+                flash('Saved to your profile')
+            #Remove it from saved list
+            else:
+                user_saved.remove(item)
+                user_ref.set({'saved_items':user_saved}, merge=True)
+                flash('Removed from your profile')
+
+        return render_template("userhome.html", user_id=userid, name=first_name, items=items, user_saved=user_saved)
     else:
         return redirect(url_for("login"))
 
@@ -201,7 +222,6 @@ def list_item():
     else:
         return redirect(url_for("login"))
 
-
 @app.route("/item/<itemid>") 
 def item(itemid):
     '''displays one item's information in depth'''
@@ -211,8 +231,6 @@ def item(itemid):
         return render_template("item.html", item=item, itemid=itemid)
     else:
         return redirect(url_for("login")) 
-    
-
 
 if __name__ == '__main__':
     # Configures database and gets access to the database

@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
+{% block body %}
     <head>
-
     </head>
     <body>
         {% if name %}
@@ -18,17 +17,29 @@
             <th>Description</th>
             <th>Price</th>
             <th>Seller</th>
+            <th>Save</th>
         {% for item in items %}
           <tr>
-            <td><a href="/item/{{ item['id'] }}">{{item['Day posted']}}</a></td> 
+            <td><a href="/item/{{ item['id'] }}">{{item['post_date']}}</a></td>
             <td>{{item['name']}}</td>
             <td>{{item['description']}}</td>
             <td>{{item['price']}}</td>
             <td>{{item['seller']}}</td>
-          </tr>
+            <td>
+            <form action='/userhome' method='POST'>
+                {% if item['id'] in user_saved %}
+                    <input type="hidden"  name="itemd" value="{{item['id']}}">
+                    <input type="submit" value="Saved">
+                {% else %}
+                    <input type="hidden" name="itemd" value="{{item['id']}}">
+                    <input type="submit" value='Save'>
+                {% endif %}
+            </form>
+            </td>
+          </tr>    
         {% endfor %}
         </table> 
         <a href="/logout">Sign out here</a>
         <a href="/edituser">Edit your profile here</a>
     </body>
-</html>
+{% endblock %}
