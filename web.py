@@ -182,7 +182,6 @@ def validate_listing():
         pass
 
 
-
 @app.route("/userhome")
 def userhome():
     '''displays the user homepage, which consists of item listings and navbar'''
