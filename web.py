@@ -9,9 +9,12 @@ Jonas Kazlauskas, Olin '23
 Kelly Yen, Olin '23
 """
 
-
+import os
+import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_bootstrap import Bootstrap
 import firebase_admin
+from google.cloud.firestore_v1 import ArrayRemove, ArrayUnion
 from firebase_admin import credentials, firestore, auth, storage
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -38,7 +41,7 @@ def get_all_items():
         items_list.append(item_dict)
     return items_list
 
-def login_validate(email, password):
+def login_validate(email, password_attempt):
     ''' 
     Validates login by checking for matching email and password
     
@@ -47,9 +50,8 @@ def login_validate(email, password):
             -user.id: id of user 
     '''
     users = DB.collection(u'Users').stream()
-    print(users)
     for user in users:
-        if check_password_hash(user.get('password'), password) and user.get('email') == email:
+        if check_password_hash(user.get('password'), password_attempt) and user.get('email') == email:
             return True, user.id
     return False, user.id
 
@@ -66,21 +68,41 @@ def check_email(email):
             return True
     return False
 
-def save_item(itemid, userid):
-    '''
-    Adds or removes item to user saved list in DB
-    '''
-    user_ref = DB.collection(u'Users').document(userid)
-    user_saved = user_ref.get().get('saved_items')
-    if itemid not in user_saved:
-        user_saved.append(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
-        flash('Saved to your profile')
-    else:
-        user_saved.remove(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
-        flash('Removed from your profile')
-    return None
+def get_media_link(filename):
+    image_blob = bucket.get_blob(filename)
+    image_blob.make_public()
+    return image_blob.media_link
+
+def get_uploaded_images(images):
+    uploaded_images = []
+    for image in images:
+        uploaded_images.append(get_image(image))
+
+    return uploaded_images
+
+def get_image(image):
+    
+    unique = str(uuid.uuid4())
+
+
+    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+    image.save(image_filepath)
+    print(image.filename)
+    print(dir(image))
+    filetype = image.content_type.split("/")[0]
+
+    new = str(unique + "." + filetype)
+    os.rename(image_filepath, new)
+    
+    
+    blob = bucket.blob(new)
+    blob.upload_from_filename(new)
+
+    # Deletes image from local directory after it was uploaded
+    os.remove(new)
+
+    return get_media_link(new)
+
 
 @app.route('/')
 def splash(): 
@@ -122,7 +144,7 @@ def validate_login():
             session['userid'] = userid
             return redirect(url_for("userhome"))
        else: 
-            flash("Incorrect username or password", 'error')
+            error = "Incorrect username or password"
             return redirect(url_for('loginerror'))
         
     return redirect(url_for('error'))
@@ -131,46 +153,54 @@ def validate_login():
 def validate_signup():
     '''validates sign up by checking to make sure all fields are filled out properly, email belongs to a student, and password matches confirmed password'''
     if request.method == 'POST':
-       if 0 not in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school']), len(request.form['password'])}: 
-            if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
-                
-                hashed = generate_password_hash(request.form['password'])
+        if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
+            
+            hashed = generate_password_hash(request.form['password'])
 
-                user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
-                DB.collection(u'Users').add(user.to_dict())   
+            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
+            DB.collection(u'Users').add(user.to_dict())   
 
-                return redirect(url_for("login")) #user must log in after creating account
-            else:
+            return redirect(url_for("login")) #user must log in after creating account
+        else:
 
-                flash("Invalid email or password confirmation", 'error')
-                redirect(url_for('signuperror'))
-       else:
-            flash("Missing fields", 'error')
-            return redirect(url_for('signuperror'))
-
+            error = "Invalid email or password confirmation"
+            redirect(url_for('signuperror'))
     return redirect(url_for('signuperror'))
 
 @app.route('/validatelisting', methods = ['POST', 'GET'])
 def validate_listing():
     if request.method == 'POST':
-        pass
-    pass
+        userid = session['userid']
 
-@app.route("/userhome", methods = ['POST', 'GET'])
+        new_item = Item(
+            request.form['name'], 
+            request.form['price'], 
+            request.form['description'], 
+            get_uploaded_images(request.files.getlist('pictures')), 
+            request.form['quality'], 
+            userid)
+        print(dir(DB.collection(u'Items').document()))
+
+        itemref = DB.collection(u'Items').document()
+        user_ref = DB.collection(u'Users').document(userid)
+        user_ref.update({
+            u'selling': ArrayUnion([itemref.id])
+        })
+
+        itemref.set(new_item.to_dict())
+        return redirect(url_for('userhome'))
+    else:
+        pass
+ 
+
+@app.route("/userhome")
 def userhome():
-    '''Displays the user homepage, which consists of item listings and navbar'''
+    '''displays the user homepage, which consists of item listings and navbar'''
     if "userid" in session:
         userid = session['userid']
-        user_ref = DB.collection(u'Users').document(userid)
-        first_name = user_ref.get().get('fname')
+        first_name = DB.collection(u'Users').document(userid).get().get('fname')
         items = get_all_items()
-
-        #If an item is saved/unsaved
-        if request.method == 'POST':
-            save_item(request.form['itemid'], userid)
-        user_saved = user_ref.get().get('saved_items')
-
-        return render_template("userhome.html", user_id=userid, name=first_name, items=items, user_saved=user_saved)
+        return render_template("userhome.html", user_id=userid, name=first_name, items = items)
     else:
         return redirect(url_for("login"))
 
@@ -179,32 +209,21 @@ def edituser():
     '''Displays form for user to edit their information'''
     if 'userid' in session:
         userid = session['userid']
-        user_ref = DB.collection(u'Users').document(userid)
-        user_info = user_ref.get().to_dict()
+        user_info = DB.collection(u'Users').document(userid).get().to_dict()
         if request.method == 'POST':
-
-            #Delete Profile
-            if request.form['sub'] == 'Delete':
-                if check_password_hash(user_ref.get().get('password'), request.form['delpass']):
-                    user_ref.delete()
-                    session.clear()
-                    flash('Profile deleted')
-                    return redirect(url_for('splash'))
-
-            #Change user info
             if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school'])}:
                 flash(u'Oops! Name, email, and school name are required!', 'error')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
+            #User info changed
+            user_ref = DB.collection(u'Users').document(userid)
+            password = request.form['password']
             #Check if password was changed
             if len(request.form['password']) == 0:
                 password = DB.collection(u'Users').document(userid).get().get('password')
-            else:
-                password = request.form['password']
             #Check if passwords match
             if request.form['password'] != request.form['confirmpass']:
                 flash(u'Oops! New passwords do not match!', 'error')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
-            #Verify email
             if check_email(request.form['email']):
                 user_info=User(request.form['fname'],
                                request.form['lname'],
@@ -216,7 +235,6 @@ def edituser():
                 flash('Your information was succesfully updated')
             else:
                 flash(u'Invalid Email', 'error')
-
         return render_template("edituser.html", user_id=userid, user_info=user_info)
     else:
         return redirect(url_for("login"))
@@ -235,6 +253,7 @@ def list_item():
     else:
         return redirect(url_for("login"))
 
+
 @app.route("/item/<itemid>") 
 def item(itemid):
     '''displays one item's information in depth'''
@@ -243,7 +262,7 @@ def item(itemid):
         item = DB.collection(u'Items').document(itemid).get().to_dict()
         return render_template("item.html", item=item, itemid=itemid)
     else:
-        return redirect(url_for("login")) 
+        return redirect(url_for("login"))
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
@@ -257,6 +276,10 @@ if __name__ == '__main__':
     DB = firestore.client()
     bucket = storage.bucket()
 
+    UPLOAD_FOLDER = os.getcwd()
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
+
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #test if firebase connection is working
     # doc_ref = DB.collection(u'Users').limit(1)
