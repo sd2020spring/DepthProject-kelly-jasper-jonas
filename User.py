@@ -41,11 +41,11 @@ class User:
 			'phone' : self.phone,
 			'school' : self.school,
 			'password' : self.password,
-			'items selling' : self.items_sold,
-			'looking for' : self.looking_for,
-			'previous purchase' : self.purchases,
-			'saved items' : self.saved_items,
-			'profile picture' : self.pic, 
+			'selling' : self.items_sold,
+			'looking_for' : self.looking_for,
+			'purchases' : self.purchases,
+			'saved_items' : self.saved_items,
+			'profile_pic' : self.pic, 
 		}
 		return user_dict
 

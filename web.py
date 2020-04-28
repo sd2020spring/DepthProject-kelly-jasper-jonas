@@ -14,6 +14,7 @@ import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap
 import firebase_admin
+from google.cloud.firestore_v1 import ArrayRemove, ArrayUnion
 from firebase_admin import credentials, firestore, auth, storage
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -40,7 +41,7 @@ def get_all_items():
         items_list.append(item_dict)
     return items_list
 
-def login_validate(email, password):
+def login_validate(email, password_attempt):
     ''' 
     Validates login by checking for matching email and password
     
@@ -83,11 +84,14 @@ def get_image(image):
     
     unique = str(uuid.uuid4())
 
+
     image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
     image.save(image_filepath)
     print(image.filename)
+    print(dir(image))
+    filetype = image.content_type.split("/")[0]
 
-    new = str(app.config['UPLOAD_FOLDER'] + "/" + unique + ".png")
+    new = str(unique + "." + filetype)
     os.rename(image_filepath, new)
     
     
@@ -175,12 +179,19 @@ def validate_listing():
             get_uploaded_images(request.files.getlist('pictures')), 
             request.form['quality'], 
             userid)
+        print(dir(DB.collection(u'Items').document()))
 
-        DB.collection(u'Items').add(new_item.to_dict())
+        itemref = DB.collection(u'Items').document()
+        user_ref = DB.collection(u'Users').document(userid)
+        user_ref.update({
+            u'selling': ArrayUnion([itemref.id])
+        })
+
+        itemref.set(new_item.to_dict())
         return redirect(url_for('userhome'))
     else:
         pass
-
+ 
 
 @app.route("/userhome")
 def userhome():
