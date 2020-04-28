@@ -53,7 +53,7 @@ def login_validate(email, password_attempt):
     for user in users:
         if check_password_hash(user.get('password'), password_attempt) and user.get('email') == email:
             return True, user.id
-    return False, user.id
+    return False, ""
 
 def check_email(email): 
     '''
