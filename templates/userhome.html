@@ -1,8 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
-    <head>
-    </head>
-    <body>
+    <div class="container mt-3">
         {% if name %}
         <h1>Hello {{name}}!</h1>
         {% else %}
@@ -41,5 +39,5 @@
         </table> 
         <a href="/logout">Sign out here</a>
         <a href="/edituser">Edit your profile here</a>
-    </body>
+    </div>
 {% endblock %}
