@@ -75,13 +75,15 @@ def save_item(itemid, userid):
     '''
     user_ref = DB.collection(u'Users').document(userid)
     user_saved = user_ref.get().get('saved_items')
-    if itemid not in user_saved:
-        user_saved.append(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
+    if user_saved == None or itemid not in user_saved:
+        user_ref.set({
+            u'saved_items': ArrayUnion([itemid])
+        }, merge = True)
         flash('Saved to your profile')
     else:
-        user_saved.remove(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
+        user_ref.set({
+            u'saved_items': ArrayRemove([itemid])
+        }, merge = True)
         flash('Removed from your profile')
     return None
 
@@ -270,7 +272,8 @@ def logout():
 def list_item():
     '''displays form for user to list new item'''
     if 'userid' in session:
-        return render_template("list.html")
+        categories = ['Electronics', 'Educational', 'Furniture', 'Service', 'Decor', 'Clothing']
+        return render_template("list.html", categories = categories)
     else:
         return redirect(url_for("login"))
 
