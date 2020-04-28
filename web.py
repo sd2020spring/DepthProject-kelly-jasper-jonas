@@ -48,6 +48,7 @@ def login_validate(email, password):
             -user.id: id of user 
     '''
     users = DB.collection(u'Users').stream()
+    print(users)
     for user in users:
         if check_password_hash(user.get('password'), password) and user.get('email') == email:
             return True, user.id

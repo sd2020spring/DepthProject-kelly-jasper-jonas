@@ -1,8 +1,15 @@
-{% extends "main.html" %}
-{% block content %}
+{% extends "base.html" %}
+{% block body %}
 <div class="container">
-	<p style="text-align: center;"><a href="/login" style="text-align: center;">Log in to your account here</a></p>
-	<p style="text-align: center;"><a href="/signup" style="text-align: center;">Sign up for an account here</a></p>
-</div>
-	
+	<h1 class="h2 mt-5 mb-4 font-weight-bold text-center">Welcome to Frank's List!</h1>
+	<div class="row mx-auto" style="max-width: 400px">
+    	<div class="col">
+      		<a href="/login" class="btn btn-lg btn-primary btn-block" role="button">Sign In</a>
+    	</div>
+    	<div class="col">
+      		<a href="/signup" class="btn btn-lg btn-primary btn-block" role="button">Sign Up</a>
+    	</div>
+    	<p class="mx-auto mt-4">Made with &#10084; at <a href="https://olin.edu" target="_blank">Olin College</a></p>
+  </div>
+</div>	
 {% endblock %}
