@@ -68,6 +68,23 @@ def check_email(email):
             return True
     return False
 
+def save_item(itemid, userid):
+    '''
+    Adds item to user saved list in DB
+    Adds or removes item to user saved list in DB
+    '''
+    user_ref = DB.collection(u'Users').document(userid)
+    user_saved = user_ref.get().get('saved_items')
+    if itemid not in user_saved:
+        user_saved.append(itemid)
+        user_ref.set({'saved_items':user_saved}, merge=True)
+        flash('Saved to your profile')
+    else:
+        user_saved.remove(itemid)
+        user_ref.set({'saved_items':user_saved}, merge=True)
+        flash('Removed from your profile')
+    return None
+
 def get_media_link(filename):
     image_blob = bucket.get_blob(filename)
     image_blob.make_public()
@@ -193,14 +210,18 @@ def validate_listing():
         pass
  
 
-@app.route("/userhome")
+@app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
     '''displays the user homepage, which consists of item listings and navbar'''
     if "userid" in session:
         userid = session['userid']
-        first_name = DB.collection(u'Users').document(userid).get().get('fname')
+        user_ref = DB.collection(u'Users').document(userid)
+        first_name = user_ref.get().get('fname')
         items = get_all_items()
-        return render_template("userhome.html", user_id=userid, name=first_name, items = items)
+        if request.method == 'POST':
+             save_item(request.form['itemid'], userid)
+        user_saved = user_ref.get().get('saved_items')
+        return render_template("userhome.html", user_id=userid, name=first_name, items = items, user_saved = user_saved)
     else:
         return redirect(url_for("login"))
 
