@@ -14,7 +14,7 @@ from datetime import datetime
 class Item:
 	"""Class to represent an item to be listed"""
 
-	def __init__(self, name, price, category, description, images, quality, userid, tags=None): 
+	def __init__(self, name, price, description, category, images, quality, userid, tags=None): 
 		"""Create an Item object with relevant attributes
 		- is it better to contain attributes in a single object?
 		TODO: implement database conenction

@@ -194,7 +194,8 @@ def validate_listing():
         new_item = Item(
             request.form['name'], 
             request.form['price'], 
-            request.form['description'], 
+            request.form['description'],
+            request.form['category'],
             get_uploaded_images(request.files.getlist('pictures')), 
             request.form['quality'], 
             userid)
@@ -207,6 +208,7 @@ def validate_listing():
         })
 
         itemref.set(new_item.to_dict())
+        flash('New listing added')
         return redirect(url_for('userhome'))
     else:
         pass
