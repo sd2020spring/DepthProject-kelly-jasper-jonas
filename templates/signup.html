@@ -1,27 +1,39 @@
 {% extends "base.html" %}
 {% block body %}
-    <head>
-    </head>
-    <body>
-        <h1>Please Sign Up</h1>
-        <a href="/login">Already have an account</a>
-        <form action = "http://127.0.0.1:5000/validatesignup" method = "POST">
+<div class="mx-auto" style="width: 400px;">
+ <body style="align:center">
+        <form action = "/validatesignup" method = "POST">
+            <h1 class="h3 mt-5 mb-5 font-weight-bold text-center">Please Sign Up</h1>
+
             <label for="fname">First name:</label><br>
-            <input type="text" id="fname" name="fname"><br>
-            <label for="fname">Last name:</label><br>
-            <input type="text" id="lname" name="lname"><br>
-            <label for="email">Email address:</label><br>
-            <input type="text" id="email" name="email"><br>
-            <label for="phone">Phone number (not required):</label><br>
-            <input type="text" id="phone" name="phone"><br>
-            <label for="school">School name:</label><br>
-            <input type="text" id="school" name="school"><br>
-            <label for="password">Create a password:</label><br>
-            <input type ="text" id="password" name = "password"><br>
-            <label for="confirmpass">Confirm password:</label><br>
-            <input type ="text" id="confirmpass" name = "confirmpass"><br>
-            <label for="sub">Submit:</label><br>
-            <input type="submit" id="sub" name="sub"><br> 
+            <input type="text" id="fname" name="fname" class="form-control" placeholder="Frank" required="true"><br>
+
+            <label for="lname">Last name:</label><br>
+            <input type="text" id="lname" name="lname" class="form-control" placeholder="Olin" required="true"><br>
+
+            <label for="school">School:</label><br>
+            <select id="school" name="school" class="form-control">
+                <option selected="selected" value="olin">Olin</option>
+                <option value="babson">Babson</option>
+                <option value="wellesley">Wellesley</option>
+            </select><br/>
+
+            <label for="email" style="align: left">School email address:</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="frank@olin.edu" required="true" autofocus=""><br>
+
+            <label for="phone">Phone number (optional):</label><br>
+            <input type="text" id="phone" name="phone" class="form-control" placeholder="(555) 555-5555" required="false"><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Something secure" required="true"><br>
+
+            <label for="confirmpass">Confirm password:</label>
+            <input type="password" id="confirmpass" name="confirmpass" class="form-control" placeholder="The same thing, again" required="true"><br>
+
+            <button class="btn btn-lg btn-primary btn-block mt-3" type="submit" id="sub" name="sub">Sign Up</button><br>
+            <p class="text-center"><a href="/login">Already have an account?</a></p>
+            <p class="text-center"><a href="/">Back</a></p>
         </form>
     </body>
+</div>
 {% endblock %}

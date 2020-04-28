@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<body class="text-center">
+<div class="mx-auto" style="width: 400px;"">
+  <body class="text-center" style="margin: mt-5">
+    <br>
     <form class="form-signin" action="/validatelogin" method = "POST" width="30%">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <h1 class="h3 mt-5 mb-5 font-weight-bold text-center">Please Sign In</h1>
       <label for="inputEmail" class="sr-only">Email</label>
-      <input type="email" id="email" name="email" class="form-control" placeholder="Email" required="true" autofocus="">
+      <input type="email" id="email" name="email" class="form-control mb-3" placeholder="Email" required="true" autofocus="">
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="true">
-      <button class="btn btn-lg btn-primary btn-block" type="submit" id="sub" name="sub">Sign in</button>
-      <a href="signup">Don't have an account yet?</a>
-      <p class="mt-5 mb-3 text-muted">Made with &#10084; at <a href="https://olin.edu" target="_blank">Olin College</a></p>
+      <br>
+      <button class="btn btn-lg btn-primary btn-block mt-2" type="submit" id="sub" name="sub">Sign in</button>
+      <br>
+      <a href="/signup">Don't have an account yet?</a>
+      <p class="text-center"><a href="/">Back</a></p>
+      <p class="mt- mb-3 text-muted">Made with &#10084; at <a href="https://olin.edu" target="_blank">Olin College</a></p>
     </form>
-</body>
+  </body>
+  </div>
 {% endblock %}
