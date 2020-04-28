@@ -1,30 +1,40 @@
 {% include "base.html" %}
-  <div>
-  	<head>
-  	</head>
-  	<body>
-  		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" href="#">Frank's List</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarsExample07">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/edituser">Profile</a>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-md-0">
-        <input class="form-control" type="text" placeholder="Search for an item" aria-label="Search">
-      </form>
-    </div>
-  </div>
-</nav>
+<div>
+	<head>
+	</head>
+	<body>
+    <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
+      <div class="container">
+      <a class="navbar-brand" href="#">Frank's List</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <ul class="navbar-nav my-2 my-md-0">
+          <a href="/list" class="btn btn-md btn-primary btn-block mr-3" role="button">List an Item</a>
+        </ul>
+        <ul class="navbar-nav my-2 my-md-0 text-center">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% if name %}
+              Welcome, {{name}}!
+              {% else %}
+              Welcome!
+              {% endif %}
+            </a>
+            <div class="dropdown-menu text-center" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item disabled" href="/edituser">Wishlist</a>
+              <a class="dropdown-item" href="/edituser">Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/logout">Sign Out</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </nav>
 {% block content %}{% endblock %}
-  	</body>
-  </div>
+	</body>
+</div>
