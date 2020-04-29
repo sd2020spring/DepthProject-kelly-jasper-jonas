@@ -41,7 +41,7 @@ def get_all_items():
         items_list.append(item_dict)
     return items_list
 
-def get_items(userid):
+def get_items(userid, field):
     '''
     Gathers all items that a user has saved
 
@@ -49,7 +49,7 @@ def get_items(userid):
             All DB items in a list of dictionaries
     '''
     user_ref = DB.collection(u'Users').document(userid)
-    user_saved = user_ref.get().get('saved_items')
+    user_saved = user_ref.get().get(field)
     items_list = []
     for item in user_saved:
         itemref = DB.collection(u'Items').document(item)
@@ -112,21 +112,19 @@ def get_uploaded_images(images):
     print(len(images))
     uploaded_images = []
     for image in images:
-        print("hiii")
-        uploaded_images.append(get_image(image))
+        uploaded_images.append(upload_image(image, "item"))
 
     return uploaded_images
 
-def get_image(image):
-    print("hellooooooo")
+def upload_image(image, folder):
     unique = str(uuid.uuid4())
+    os.mkdir(folder)
 
-
-    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'],folder, image.filename)
     image.save(image_filepath)
     filetype = image.content_type.split("/")[1]
     print(image.content_type)
-    new = str(unique + "." + filetype)
+    new = str(folder + "/" + unique + "." + filetype)
     os.rename(image_filepath, new)
     
     
@@ -253,7 +251,7 @@ def userhome():
 @app.route("/edituser", methods=['POST', 'GET'])
 def edituser():
     '''Displays form for user to edit their information'''
-    if 'userid' in session:
+    if "userid" in session:
         userid = session['userid']
         user_info = DB.collection(u'Users').document(userid).get().to_dict()
         if request.method == 'POST':
@@ -303,8 +301,28 @@ def wishlist():
         if request.method == 'POST':
             save_item(request.form['itemid'], userid)
 
-        user_items_list = get_items(userid)
+        user_items_list = get_items(userid, "saved_items")
         return render_template("wishlist.html", user_items_list = user_items_list)
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/selling", methods = ['POST', 'GET'])
+def sellinglist():
+    '''display items user is selling'''
+    if "userid" in session:
+        userid = session=['userid']
+        user_selling_list = get_items(userid, "selling")
+        return render_template("selling.html", user_selling_list=user_selling_list)
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/purchases", methods = ['POST', 'GET'])
+def purchased():
+    '''display items user has purchased in the past'''
+    if "userid" in session:
+        userid = session=['userid']
+        user_bought = get_items(userid, "purchases")
+        return render_template("purchases.html", user_bought=user_bought)
     else:
         return redirect(url_for("login"))
 
