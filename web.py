@@ -138,6 +138,9 @@ def get_image(image):
 
     return get_media_link(new)
 
+def pull_images(itemid):
+    images_src = DB.collection(u'Items').document(itemid).get().get('images')
+    return images_src
 
 @app.route('/')
 def splash(): 
@@ -314,7 +317,8 @@ def item(itemid):
     if "userid" in session:
         userid = session['userid']
         item = DB.collection(u'Items').document(itemid).get().to_dict()
-        return render_template("item.html", item=item, itemid=itemid)
+        images = pull_images(itemid)
+        return render_template("item.html", item=item, itemid=itemid, images=images)
     else:
         return redirect(url_for("login"))
 
