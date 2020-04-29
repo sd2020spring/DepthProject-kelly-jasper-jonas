@@ -20,6 +20,11 @@
             <td>{{item['seller']}}</td>
           </tr>
         </table> 
+        <p>
+        {% for image in images %}
+            <img src="{{image}}" alt="Item image" width="300" height="400">
+        {% endfor %}
+        </p>
         <a href="/userhome">Back to Browse</a>
     </body>
 </html>
