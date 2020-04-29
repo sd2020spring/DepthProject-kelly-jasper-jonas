@@ -41,6 +41,23 @@ def get_all_items():
         items_list.append(item_dict)
     return items_list
 
+def get_items(userid):
+    '''
+    Gathers all items that a user has saved
+
+    Returns:
+            All DB items in a list of dictionaries
+    '''
+    user_ref = DB.collection(u'Users').document(userid)
+    user_saved = user_ref.get().get('saved_items')
+    items_list = []
+    for item in user_saved:
+        itemref = DB.collection(u'Items').document(item)
+        item_dict = itemref.get().to_dict()
+        item_dict.update({'id':itemref.id})
+        items_list.append(item_dict)
+    return items_list
+
 def login_validate(email, password_attempt):
     ''' 
     Validates login by checking for matching email and password
@@ -70,7 +87,6 @@ def check_email(email):
 
 def save_item(itemid, userid):
     '''
-    Adds item to user saved list in DB
     Adds or removes item to user saved list in DB
     '''
     user_ref = DB.collection(u'Users').document(userid)
@@ -135,6 +151,12 @@ def login():
         return redirect(url_for("userhome"))
     else:
         return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    '''log out of session and redirects to log in page'''
+    session.pop("userid", None)
+    return(redirect(url_for("login")))
 
 @app.route("/signup")
 def signup():
@@ -212,7 +234,6 @@ def validate_listing():
         return redirect(url_for('userhome'))
     else:
         pass
- 
 
 @app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
@@ -264,12 +285,6 @@ def edituser():
     else:
         return redirect(url_for("login"))
 
-@app.route("/logout")
-def logout():
-    '''log out of session and redirects to log in page'''
-    session.pop("userid", None)
-    return(redirect(url_for("login")))
-
 @app.route("/list")
 def list_item():
     '''displays form for user to list new item'''
@@ -279,6 +294,19 @@ def list_item():
     else:
         return redirect(url_for("login"))
 
+@app.route("/wishlist", methods = ['POST', 'GET'])
+def wishlist():
+    '''displays user saved items'''
+    if 'userid' in session:
+        userid = session['userid']
+
+        if request.method == 'POST':
+            save_item(request.form['itemid'], userid)
+
+        user_items_list = get_items(userid)
+        return render_template("wishlist.html", user_items_list = user_items_list)
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/item/<itemid>") 
 def item(itemid):
