@@ -15,9 +15,9 @@
         <table class="table table-hover table-responsive-md table-striped" style="width:100%">
             <thead class="thead-gray">
                 <tr>
+                    <th>Item Name</th>
                     <th>Category</th>
                     <th>Date Posted</th>
-                    <th>Item Name</th>
                     <th>Description</th>
                     <th>Price</th>
                     <th>Seller</th>
@@ -27,9 +27,9 @@
             <tbody>
             {% for item in items %}
               <tr>
+                <td class="align-middle"><a href="/item/{{ item['id'] }}">{{item['name'][0]|upper}}{{item['name'][1:]}}</a></td>
                 <td class="align-middle">{{item['category']}}</td>
                 <td class="align-middle">{{item['post_date'].strftime('%m-%d-%y')}}</td>
-                <td class="align-middle"><a href="/item/{{ item['id'] }}">{{item['name'][0]|upper}}{{item['name'][1:]}}</a></td>
                 <td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>
                 <td class="align-middle">${{item['price']}}</td>
                 <td class="align-middle"><a href="mailto:{{item['seller']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name'][0]|upper}}{{item['name'][1:]}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name'][0]|upper}}{{item['name'][1:]}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items.">{{item['seller']}}</a></td>
