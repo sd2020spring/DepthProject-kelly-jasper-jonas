@@ -41,6 +41,23 @@ def get_all_items():
         items_list.append(item_dict)
     return items_list
 
+def get_items(userid):
+    '''
+    Gathers all items that a user has saved
+
+    Returns:
+            All DB items in a list of dictionaries
+    '''
+    user_ref = DB.collection(u'Users').document(userid)
+    user_saved = user_ref.get().get('saved_items')
+    items_list = []
+    for item in user_saved:
+        itemref = DB.collection(u'Items').document(item)
+        item_dict = itemref.get().to_dict()
+        item_dict.update({'id':itemref.id})
+        items_list.append(item_dict)
+    return items_list
+
 def login_validate(email, password_attempt):
     ''' 
     Validates login by checking for matching email and password
@@ -70,18 +87,19 @@ def check_email(email):
 
 def save_item(itemid, userid):
     '''
-    Adds item to user saved list in DB
     Adds or removes item to user saved list in DB
     '''
     user_ref = DB.collection(u'Users').document(userid)
     user_saved = user_ref.get().get('saved_items')
-    if itemid not in user_saved:
-        user_saved.append(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
+    if user_saved == None or itemid not in user_saved:
+        user_ref.set({
+            u'saved_items': ArrayUnion([itemid])
+        }, merge = True)
         flash('Saved to your profile')
     else:
-        user_saved.remove(itemid)
-        user_ref.set({'saved_items':user_saved}, merge=True)
+        user_ref.set({
+            u'saved_items': ArrayRemove([itemid])
+        }, merge = True)
         flash('Removed from your profile')
     return None
 
@@ -133,6 +151,12 @@ def login():
         return redirect(url_for("userhome"))
     else:
         return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    '''log out of session and redirects to log in page'''
+    session.pop("userid", None)
+    return(redirect(url_for("login")))
 
 @app.route("/signup")
 def signup():
@@ -192,7 +216,8 @@ def validate_listing():
         new_item = Item(
             request.form['name'], 
             request.form['price'], 
-            request.form['description'], 
+            request.form['description'],
+            request.form['category'],
             get_uploaded_images(request.files.getlist('picture')), 
             request.form['quality'], 
             userid)
@@ -205,10 +230,10 @@ def validate_listing():
         })
 
         itemref.set(new_item.to_dict())
+        flash('New listing added')
         return redirect(url_for('userhome'))
     else:
         pass
- 
 
 @app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
@@ -260,20 +285,28 @@ def edituser():
     else:
         return redirect(url_for("login"))
 
-@app.route("/logout")
-def logout():
-    '''log out of session and redirects to log in page'''
-    session.pop("userid", None)
-    return(redirect(url_for("login")))
-
 @app.route("/list")
 def list_item():
     '''displays form for user to list new item'''
     if 'userid' in session:
-        return render_template("list.html")
+        categories = ['Electronics', 'Educational', 'Furniture', 'Service', 'Decor', 'Clothing']
+        return render_template("list.html", categories = categories)
     else:
         return redirect(url_for("login"))
 
+@app.route("/wishlist", methods = ['POST', 'GET'])
+def wishlist():
+    '''displays user saved items'''
+    if 'userid' in session:
+        userid = session['userid']
+
+        if request.method == 'POST':
+            save_item(request.form['itemid'], userid)
+
+        user_items_list = get_items(userid)
+        return render_template("wishlist.html", user_items_list = user_items_list)
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/item/<itemid>") 
 def item(itemid):

@@ -12,6 +12,12 @@
         <input type="text" id="description" name="description" class="form-control" placeholder="Fun to throw around with friends!" required="true"><br>
         <label for="price">Price ($)</label><br>
         <input type="number" id="price" name="price" class="form-control" placeholder="5" required="true"><br>
+        <label for="category">Choose a category:</label>
+        <select id="category" name="category">
+            {% for category in categories %}
+                <option value="{{category}}">{{category}}</option>
+            {% endfor %}
+        </select> 
         <p>Quality</p>
         <div class="form-check">
             <input class="form-check-input" type="radio" id="new" name="quality" value="new">

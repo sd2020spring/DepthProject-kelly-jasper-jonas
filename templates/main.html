@@ -5,8 +5,8 @@
 	<body>
     <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">
-          <img src="{{ url_for('static', filename='img/FL-FullColor-Sm.svg') }}" width="30" height="30" class="d-inline-block align-top">
+        <a class="navbar-brand" href="/userhome">
+          <img src="{{ url_for('static', filename='FL-FullColor-Sm.svg') }}" width="30" height="30" class="d-inline-block align-top">
           Frank's List
         </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +28,7 @@
               {% endif %}
             </a>
             <div class="dropdown-menu text-center" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item disabled" href="/edituser">Wishlist</a>
+              <a class="dropdown-item" href="/wishlist">Wishlist</a>
               <a class="dropdown-item" href="/edituser">Profile</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/logout">Sign Out</a>
