@@ -5,7 +5,7 @@
         <h1>List an Item!</h1>
         <h5 >Add in details about your item and upload some images so people can see what you're selling!</h5>
     </div>
-    <form class="mt-4" style="max-width: 500px" action="/validatelisting" method="POST">
+    <form class="mt-4" style="max-width: 500px" action="/validatelisting" method="POST" enctype='multipart/form-data'>
         <label for="name">Item name</label><br>
         <input type="text" id="name" name="name" class="form-control" placeholder="Beach Ball" required="true"><br>
         <label for="description">Description</label><br>
@@ -44,7 +44,7 @@
             </label><br>
         </div><br>
         <label for="picture">Picture</label><br>
-        <input type="file" id="picture" name="picture" accept="image/png, image/jpeg"><br><br>
+        <input type="file" id="picture" name="picture" multiple = 'true'><br><br>
         <button class="btn btn-lg btn-primary btn-block mt-3" type="submit" id="sub" name="sub">List Item</button><br> 
     </form>
 </div>         

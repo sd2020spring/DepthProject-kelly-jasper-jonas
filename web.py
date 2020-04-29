@@ -91,23 +91,23 @@ def get_media_link(filename):
     return image_blob.media_link
 
 def get_uploaded_images(images):
+    print(len(images))
     uploaded_images = []
     for image in images:
+        print("hiii")
         uploaded_images.append(get_image(image))
 
     return uploaded_images
 
 def get_image(image):
-    
+    print("hellooooooo")
     unique = str(uuid.uuid4())
 
 
     image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
     image.save(image_filepath)
-    print(image.filename)
-    print(dir(image))
-    filetype = image.content_type.split("/")[0]
-
+    filetype = image.content_type.split("/")[1]
+    print(image.content_type)
     new = str(unique + "." + filetype)
     os.rename(image_filepath, new)
     
@@ -193,7 +193,7 @@ def validate_listing():
             request.form['name'], 
             request.form['price'], 
             request.form['description'], 
-            get_uploaded_images(request.files.getlist('pictures')), 
+            get_uploaded_images(request.files.getlist('picture')), 
             request.form['quality'], 
             userid)
         print(dir(DB.collection(u'Items').document()))
