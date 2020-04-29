@@ -49,9 +49,10 @@ def get_items(userid, field):
             All DB items in a list of dictionaries
     '''
     user_ref = DB.collection(u'Users').document(userid)
-    user_saved = user_ref.get().get(field)
+    items = user_ref.get().get(field)
+    print(items)
     items_list = []
-    for item in user_saved:
+    for item in items:
         itemref = DB.collection(u'Items').document(item)
         item_dict = itemref.get().to_dict()
         item_dict.update({'id':itemref.id})
@@ -310,8 +311,9 @@ def wishlist():
 def sellinglist():
     '''display items user is selling'''
     if "userid" in session:
-        userid = session=['userid']
+        userid = session['userid']
         user_selling_list = get_items(userid, "selling")
+        print(user_selling_list)
         return render_template("selling.html", user_selling_list=user_selling_list)
     else:
         return redirect(url_for("login"))
@@ -320,7 +322,7 @@ def sellinglist():
 def purchased():
     '''display items user has purchased in the past'''
     if "userid" in session:
-        userid = session=['userid']
+        userid = session['userid']
         user_bought = get_items(userid, "purchases")
         return render_template("purchases.html", user_bought=user_bought)
     else:
@@ -349,7 +351,7 @@ if __name__ == '__main__':
     bucket = storage.bucket()
 
     UPLOAD_FOLDER = os.getcwd()
-    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
