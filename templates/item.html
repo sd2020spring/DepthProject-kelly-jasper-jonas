@@ -1,30 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-
-    </head>
-    <body>
-        <h1>Item listing page</h1>
-        <table style="width:100%">
-          <tr>
-            <th>Date Posted</th>
-            <th>Item Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Seller</th>
-          <tr>
-            <td>{{item['Day posted']}}</a></td> 
-            <td>{{item['name']}}</td>
-            <td>{{item['description']}}</td>
-            <td>{{item['price']}}</td>
-            <td>{{item['seller']}}</td>
-          </tr>
-        </table> 
-        <p>
-        {% for image in images %}
-            <img src="{{image}}" alt="Item image" width="300" height="400">
-        {% endfor %}
-        </p>
-        <a href="/userhome">Back to Browse</a>
-    </body>
-</html>
+{% extends "main.html" %}
+{% block content %}
+<div class="container mt-4">
+    <a href="/userhome" type="button" class="btn btn-outline-primary">Back to Browse</a>
+    <div class="row mt-4">
+        <div class="col-sm align-items-center text-center">
+            {% for image in images %}
+                <img class="img-fluid " src="{{image}}" alt="Item image">
+            {% endfor %}
+        </div>
+        <div class="col-sm ml-4">
+            <h1 class="h1 mb-3">{{item['name']|title}}</h3>
+            <h2 class="h2 text-primary mb-3">${{item['price']}}</h2>
+            <h5 class="h5">Description:</h5>
+            <p>{{item['description'][0]|upper}}{{item['description'][1:]}}</p>
+            <h5 class="h5">Date Posted:</h5>
+            <p>{{item['post_date'].strftime('%m-%d-%y')}}</p>
+            <h5 class="h5">Seller:</h5>
+            <p>{{item['seller']}}</p>
+            <a href="mailto:{{item['seller']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items." type="button" class="btn btn-primary">Contact Seller</a>
+        </div>
+    </div> 
+</div>
+{% endblock %}

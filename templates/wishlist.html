@@ -1,6 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-4">
+	<a href="/userhome" type="button" class="btn btn-outline-primary mb-3">Back to Browse</a>
 	<h1 class="h1 mb-3">Wishlist</h1>
 	{% if user_items_list %}
 		<table class="table table-hover table-responsive-md table-striped" style="width:100%">
@@ -27,7 +28,7 @@
 			    <td class="text-center">
 			        <form action='/userhome' method='POST'>
 		                <input type="hidden" id = 'itemid' name="itemid" value="{{item['id']}}">
-		                <button class="btn btn-link btn-sm rounded-pill"  type="submit" value='Saved'>&#x2705;</button>
+		                <button class="btn btn-link btn-sm text-decoration-none"  type="submit" value='Saved'>&#10060;</button>
 			        </form>
 			    </td>
 			  </tr>    
