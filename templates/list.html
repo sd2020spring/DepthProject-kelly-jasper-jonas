@@ -1,57 +1,60 @@
 {% extends "main.html" %}
 {% block content %}
-<div class="container mt-5">
-    <div style="max-width: 500px">
-        <h1>List an Item!</h1>
-        <h5 >Add in details about your item and upload some images so people can see what you're selling!</h5>
-    </div>
+<div class="mx-auto" style="width: 400px; align:center">
+        <h1 class="h1 mt-5 mb-4 text-center">List an Item!</h1>
+        <h5 class="h5 text-center mb-4">Add some details and images about your item so people can see what you're selling!</h5>
     <form class="mt-4" style="max-width: 500px" action="/validatelisting" method="POST" enctype='multipart/form-data'>
         <label for="name">Item name</label><br>
         <input type="text" id="name" name="name" class="form-control" placeholder="Beach Ball" required="true"><br>
         <label for="description">Description</label><br>
-        <input type="text" id="description" name="description" class="form-control" placeholder="Fun to throw around with friends!" required="true"><br>
-        <label for="price">Price ($)</label><br>
-        <input type="number" id="price" name="price" class="form-control" placeholder="5" required="true"><br>
+        <textarea type="text" id="description" name="description" class="form-control" placeholder="Fun to throw around with friends!" required="true"></textarea><br>
+        <label for="price">Price</label><br>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input type="number" id="price" name="price" class="form-control" placeholder="5.00" required="true">
+        </div><br>
         <label for="category">Choose a category:</label>
-        <select id="category" name="category">
+        <select id="category" name="category" class="form-control">
             {% for category in categories %}
                 <option value="{{category}}">{{category}}</option>
             {% endfor %}
-        </select> 
+        </select><br>
         <p>Quality</p>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="new" name="quality" value="new">
-            <label class="form-check-label" for="new">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="new" name="quality" value="new">
+            <label class="custom-control-label" for="new">
                 Brand new
             </label><br>
         </div>  
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="lused" name="quality" value="lused">
-            <label class="form-check-label" for="lused">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="lused" name="quality" value="lused">
+            <label class="custom-control-label" for="lused">
                 Lightly used
             </label><br>
         </div>  
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="used" name="quality" value="used">
-            <label class="form-check-label" for="used">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="used" name="quality" value="used">
+            <label class="custom-control-label" for="used">
                 Used
             </label><br>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" id="hused" name="quality" value="hused">
-            <label class="form-check-label" for="hused">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="hused" name="quality" value="hused">
+            <label class="custom-control-label" for="hused">
                 Heavily used
             </label><br>
         </div>
-        <div class="form-check">
-                <input class="form-check-input" type="radio" id="fix" name="quality" value="fix">
-                <label class="form-check-label"for="fix">
-                You'll need to make some repairs
+        <div class="custom-control custom-radio">
+                <input class="custom-control-input" type="radio" id="fix" name="quality" value="fix">
+                <label class="custom-control-label"for="fix">
+                Repairs necesssary
             </label><br>
         </div><br>
         <label for="picture">Picture</label><br>
         <input type="file" id="picture" name="picture" multiple = 'true'><br><br>
-        <button class="btn btn-lg btn-primary btn-block mt-3" type="submit" id="sub" name="sub">List Item</button><br> 
+        <button class="btn btn-lg btn-success btn-block mt-3" type="submit" id="sub" name="sub">List Item</button><br> 
     </form>
 </div>         
 {% endblock %}
