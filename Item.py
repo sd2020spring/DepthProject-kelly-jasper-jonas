@@ -28,6 +28,7 @@ class Item:
 		self.tags = tags
 		self.quality = quality
 		self.post_date = datetime.now()
+		self.buyer = ""
 		self.available = True
 
 	def to_dict(self):
@@ -43,6 +44,7 @@ class Item:
             'post_date' : self.post_date,
 			'available' : self.available,
 			'quality' : self.quality,
+			'buyer' : self.buyer,
         }
 		
 		return items_dict

@@ -141,6 +141,9 @@ def pull_images(itemid):
     images_src = DB.collection(u'Items').document(itemid).get().get('images')
     return images_src
 
+def unlist(itemid, userid):
+    item_ref = DB.collection(u'Items').document(itemid)
+
 @app.route('/')
 def splash(): 
     '''Displays the landing page and prompts user to sign up or log in'''
@@ -315,8 +318,9 @@ def sellinglist():
     '''display items user is selling'''
     if "userid" in session:
         userid = session['userid']
+        if request.method == 'POST':
+            unlist(request.form['itemid'], userid)
         user_selling_list = get_items(userid, "selling")
-        print(user_selling_list)
         return render_template("selling.html", user_selling_list=user_selling_list)
     else:
         return redirect(url_for("login"))
