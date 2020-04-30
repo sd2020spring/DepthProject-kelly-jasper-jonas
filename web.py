@@ -294,7 +294,7 @@ def edituser():
 def list_item():
     '''displays form for user to list new item'''
     if 'userid' in session:
-        categories = ['Electronics', 'Educational', 'Furniture', 'Service', 'Decor', 'Clothing']
+        categories = DB.collection(u'Categories').document('categories').get().get('categories')
         return render_template("list.html", categories = categories)
     else:
         return redirect(url_for("login"))
