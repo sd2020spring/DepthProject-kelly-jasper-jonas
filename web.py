@@ -235,6 +235,9 @@ def validate_listing():
         user_ref.update({
             u'selling': ArrayUnion([itemref.id])
         })
+        DB.collection(u'Categories').document('categories').update({
+            request.form['category']: ArrayUnion([itemref.id])
+            })
         itemref.set(new_item.to_dict())
         flash('New listing added')
         return redirect(url_for('userhome'))
@@ -321,6 +324,9 @@ def sellinglist():
         userid = session['userid']
         if request.method == 'POST':
             unlist(request.form['itemid'], userid)
+            DB.collection(u'Categories').document('categories').update({
+            request.form['item_cat']: ArrayRemove([itemref.id])
+            })
         user_selling_list = get_items(userid, "selling")
         return render_template("selling.html", user_selling_list=user_selling_list)
     else:
