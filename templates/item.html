@@ -16,8 +16,8 @@
             <h5 class="h5">Date Posted:</h5>
             <p>{{item['post_date'].strftime('%m-%d-%y')}}</p>
             <h5 class="h5">Seller:</h5>
-            <p>{{item['seller']}}</p>
-            <a href="mailto:{{item['seller']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items." type="button" class="btn btn-primary">Contact Seller</a>
+            <p>{{seller['fname']}} {{seller['lname'][0]}}</p>
+            <a href="mailto:{{seller['email']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items." type="button" class="btn btn-primary">Contact Seller</a>
         </div>
     </div> 
 </div>
