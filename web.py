@@ -12,7 +12,6 @@ Kelly Yen, Olin '23
 import os
 import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_bootstrap import Bootstrap
 import firebase_admin
 from google.cloud.firestore_v1 import ArrayRemove, ArrayUnion
 from firebase_admin import credentials, firestore, auth, storage
@@ -360,7 +359,8 @@ def item(itemid):
         userid = session['userid']
         item = DB.collection(u'Items').document(itemid).get().to_dict()
         images = pull_images(itemid)
-        return render_template("item.html", item=item, itemid=itemid, images=images)
+        seller = DB.collection(u'Users').document(item['seller']).get().to_dict()
+        return render_template("item.html", item=item, itemid=itemid, images=images, seller=seller)
     else:
         return redirect(url_for("login"))
 
