@@ -1,31 +1,35 @@
-{% extends "base.html" %}
-{% block body %}
-    <head>
-    </head>
-    <body>
-        <h1>Edit Profile Information</h1>
-        <a href="/userhome">Back to home</a>
+{% extends "main.html" %}
+{% block content %}
+<div class="mx-auto" style="width: 400px; align:center">
+        <h1 class="h3 mt-5 mb-4 font-weight-bold text-center">Edit Profile</h1>
+        <h5 class="h5 text-center mb-4">Update your profile info below.</h5>
         <form action = "/edituser" method = "POST">
-            <label for="fname">New first name:</label><br>
-            <input type="text" id="fname" name="fname" value="{{user_info['fname']}}"><br>
-            <label for="fname">New last name:</label><br>
-            <input type="text" id="lname" name="lname" value="{{user_info['lname']}}"><br>
-            <label for="email">New email address:</label><br>
-            <input type="text" id="email" name="email" value="{{user_info['email']}}"><br>
-            <label for="phone">New phone number:</label><br>
-            <input type="text" id="phone" name="phone" value="{{user_info['phone']}}"><br>
-            <label for="school">New school name:</label><br>
-            <input type="text" id="school" name="school" value="{{user_info['school']}}"><br>
+            <label for="fname">First name:</label><br>
+            <input type="text" id="fname" name="fname" value="{{user_info['fname']}}" class="form-control" placeholder="Frank"><br>
+            <label for="fname">Last name:</label><br>
+            <input type="text" id="lname" name="lname" value="{{user_info['lname']}}" class="form-control" placeholder="Olin"><br>
+            <label for="email">Email address:</label><br>
+            <input type="text" id="email" name="email" value="{{user_info['email']}}" class="form-control" placeholder="frank@olin.edu"><br>
+            <label for="phone">Phone number (optional):</label><br>
+            <input type="text" id="phone" name="phone" value="{{user_info['phone']}}" class="form-control" placeholder="(555) 555-5555"><br>
+            <label for="school">School:</label><br>
+            <select type="text" id="school" name="school" class="form-control">
+                <option selected="selected" value="{{user_info['school']}}">{{user_info['school']}}</option>
+                <option value="olin">Olin</option>
+                <option value="babson">Babson</option>
+                <option value="wellesley">Wellesley</option>
+            </select><br/>
             <label for="password">New password:</label><br>
-            <input type ="text" id="password" name = "password"><br>
+            <input type ="password" id="password" name="password" class="form-control" placeholder="Something secure"><br>
             <label for="confirmpass">Confirm new password:</label><br>
-            <input type ="text" id="confirmpass" name = "confirmpass"><br>
-            <input type="submit" id="sub" name="sub" value = 'Update'><br> 
-        <p>Note: Passwords will not be shown</p><br>
-        <p>Enter your current password and hit delete to permanently delete your profile</p>
+            <input type ="password" id="confirmpass" name="confirmpass" class="form-control" placeholder="The same thing, again"><br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="sub" name="sub" value="Update">Update</button><br>
+            <h1 class="h3 mt-4 mb-4 font-weight-bold text-center">Delete Profile</h1>
+            <h5 class="h5 text-center mb-4">Enter your current password and hit delete to permanently delete your profile.</h5>
+            <h5 class="h5 text-center mb-4 font-weight-bold">This action cannot be undone.</h5>
             <label for="delpass">Current password:</label><br>
-            <input type ="text" id="delpass" name = "delpass"><br>
-            <input type="submit" id="sub" name="sub" value="Delete"><br> 
+            <input type ="password" id="delpass" name "delpass" class="form-control"><br>
+            <button class="btn btn-lg btn-danger btn-block" type="submit" id="sub" name="sub" value="Delete">Delete Profile</button><br>
         </form>
-    </body>
+</div>
 {% endblock %}
