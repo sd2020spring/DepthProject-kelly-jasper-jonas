@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container mt-5">
+    <div style="max-width: 500px">
+        <h1>Edit your listing</h1>
+        <h5 >Change you item info below</h5>
+    </div>
+    <a href="/userhome">Back to home</a>
+    <form class="mt-4" style="max-width: 500px" action="/edititem/{{itemid}}" method="POST" enctype='multipart/form-data'>
+        <label for="name">Item name</label><br>
+        <input type="text" id="name" name="name" class="form-control" value="{{item['name']}}" required><br>
+        <label for="description">Description</label><br>
+        <input type="text" id="description" name="description" class="form-control" value="{{item['description']}}" required><br>
+        <label for="price">Price ($)</label><br>
+        <input type="number" id="price" name="price" class="form-control" value="{{item['price']}}" required><br>
+        <label for="category">Choose a category:</label>
+        <select id="category" name="category">
+            {% for category in categories %}
+                {% if category == item['category'] %}
+                <option value="{{category}}" selected="selected">{{category}}</option>
+                {% else %}
+                    <option value="{{category}}">{{category}}</option>
+                {% endif %}  
+
+                      
+            {% endfor %}
+        </select> 
+        <p>Quality</p>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="new" name="quality" value="new" {{ 'checked="checked"' if item['quality'] == 'new' else "" }}>
+            <label class="form-check-label" for="new">
+                Brand new
+            </label><br>
+        </div>  
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="lused" name="quality" value="lused"  {{ 'checked="checked"' if item['quality'] == 'lused' else "" }}>
+            <label class="form-check-label" for="lused">
+                Lightly used
+            </label><br>
+        </div>  
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="used" name="quality" value="used" {{ 'checked="checked"' if item['quality'] == 'used' else "" }}>
+            <label class="form-check-label" for="used">
+                Used
+            </label><br>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hused" name="quality" value="hused" {{ 'checked="checked"' if item['quality'] == 'hused' else "" }}>
+            <label class="form-check-label" for="hused">
+                Heavily used
+            </label><br>
+        </div>
+        <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="fix" name="quality" value="fix" {{ 'checked="checked"' if item['quality'] == 'fix' else "" }}>
+                <label class="form-check-label"for="fix">
+                You'll need to make some repairs
+            </label><br>
+        </div><br>
+        <p>
+            {% for image in images %}
+                <img src="{{image}}" alt="Item image" width="300" height="400">
+            {% endfor %}
+        </p>
+
+        <label for="picture">Re submit Images</label><br>
+        <input type="file" id="picture" name="picture" multiple = 'true'><br><br>
+        <button class="btn btn-lg btn-primary btn-block mt-3" type="submit" id="sub" name="sub">Edit Item</button><br> 
+    </form>
+</div>         
+{% endblock %}

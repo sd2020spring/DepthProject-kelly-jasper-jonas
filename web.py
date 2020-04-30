@@ -56,6 +56,14 @@ def get_items(userid, field):
         items_list.append(item)
     return items_list
 
+def get_categories():
+    categories = DB.collection(u'Categories').stream()
+    cats = []
+    for category in categories:
+        cats.append(category.id)
+    return cats
+
+
 def login_validate(email, password_attempt):
     ''' 
     Validates login by checking for matching email and password
@@ -106,20 +114,20 @@ def get_media_link(filename):
     image_blob.make_public()
     return image_blob.media_link
 
-def get_uploaded_images(images):
-    print(len(images))
+def get_uploaded_images(images, folder):
     uploaded_images = []
     for image in images:
-        uploaded_images.append(upload_image(image, "item"))
+        uploaded_images.append(upload_image(image, folder))
 
     return uploaded_images
 
 def upload_image(image, folder):
     unique = str(uuid.uuid4())
+    cwd = os.getcwd()
     if not os.path.exists(folder):
         os.mkdir(folder)
 
-    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'],folder, image.filename)
+    image_filepath = os.path.join(app.config['UPLOAD_FOLDER'], folder, image.filename)
     image.save(image_filepath)
     filetype = image.content_type.split("/")[1]
     print(image.content_type)
@@ -209,7 +217,7 @@ def validate_signup():
             
             hashed = generate_password_hash(request.form['password'])
 
-            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['phone'])
+            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['grad'],request.form['phone'])
             DB.collection(u'Users').add(user.to_dict())   
 
             return redirect(url_for("login")) #user must log in after creating account
@@ -231,7 +239,7 @@ def validate_listing():
             request.form['price'], 
             request.form['description'],
             request.form['category'],
-            get_uploaded_images(request.files.getlist('picture')), 
+            get_uploaded_images(request.files.getlist('picture'), "item"), 
             request.form['quality'], 
             userid, itemref.id)
         print(dir(DB.collection(u'Items').document()))
@@ -289,6 +297,7 @@ def edituser():
                                request.form['email'],
                                password,
                                request.form['school'],
+                               request.form['grad'],
                                request.form['phone'])
                 user_ref.set(user_info.to_dict(), merge = True)
                 flash('Your information was succesfully updated')
@@ -302,10 +311,7 @@ def edituser():
 def list_item():
     '''displays form for user to list new item'''
     if 'userid' in session:
-        categories = DB.collection(u'Categories').stream()
-        cats = []
-        for category in categories:
-            cats.append(category.id)
+        cats = get_categories()
         return render_template("list.html", categories = cats)
     else:
         return redirect(url_for("login"))
@@ -355,6 +361,36 @@ def item(itemid):
         item = DB.collection(u'Items').document(itemid).get().to_dict()
         images = pull_images(itemid)
         return render_template("item.html", item=item, itemid=itemid, images=images)
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/edititem/<itemid>", methods = ['POST', 'GET'])
+def edititem(itemid):
+    '''edit item info'''
+    if "userid" in session:
+        userid = session['userid']
+        if request.method=="POST":
+            item_ref = DB.collection(u'Items').document(itemid)
+            item = DB.collection(u'Items').document(itemid).get().to_dict()
+            if len(request.files.getlist('picture')) > 0 :
+                pictures = get_uploaded_images(request.files.getlist('picture'), "item")
+                
+            else:
+                pictures = item['images']
+                
+            item_ref.update({
+                u'name': request.form['name'],
+                u'description': request.form['description'],
+                u'price': request.form['price'],
+                u'quality': request.form['quality'],
+                u'category': request.form['category'],
+                u'images': pictures,
+            })
+            flash('Item information was succesfully updated')
+        categories = get_categories()
+        item2 = DB.collection(u'Items').document(itemid).get().to_dict()
+        images = pull_images(itemid)
+        return render_template("edititem.html", item=item2, itemid=itemid, images=images, categories = categories)
     else:
         return redirect(url_for("login"))
 
