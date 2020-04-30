@@ -33,12 +33,13 @@ def get_all_items():
     Returns:
             All DB items in a list of dictionaries
     '''
-    items = DB.collection(u'Items').stream()
+    items = DB.collection(u'Items').get()
     items_list = []
     for item in items:
         item_dict = item.to_dict()
-        item_dict.update({'id':item.id})
-        items_list.append(item_dict)
+        print(item_dict['available'])
+        if item_dict['available']: 
+            items_list.append(item_dict)
     return items_list
 
 def get_items(userid, field):
@@ -50,13 +51,10 @@ def get_items(userid, field):
     '''
     user_ref = DB.collection(u'Users').document(userid)
     items = user_ref.get().get(field)
-    print(items)
     items_list = []
-    for item in items:
-        itemref = DB.collection(u'Items').document(item)
-        item_dict = itemref.get().to_dict()
-        item_dict.update({'id':itemref.id})
-        items_list.append(item_dict)
+    for itemid in items:
+        item = DB.collection(u'Items').document(itemid).get().to_dict()
+        items_list.append(item)
     return items_list
 
 def login_validate(email, password_attempt):
@@ -119,7 +117,8 @@ def get_uploaded_images(images):
 
 def upload_image(image, folder):
     unique = str(uuid.uuid4())
-    os.mkdir(folder)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
     image_filepath = os.path.join(app.config['UPLOAD_FOLDER'],folder, image.filename)
     image.save(image_filepath)
@@ -143,6 +142,9 @@ def pull_images(itemid):
 
 def unlist(itemid, userid):
     item_ref = DB.collection(u'Items').document(itemid)
+    user_ref = DB.collection(u'Users').document(userid)
+    item_ref.update({u'available': False})
+    user_ref.update({u'selling':ArrayRemove([itemid])})
 
 @app.route('/')
 def splash(): 
@@ -217,6 +219,8 @@ def validate_signup():
 def validate_listing():
     if request.method == 'POST':
         userid = session['userid']
+        itemref = DB.collection(u'Items').document()
+        user_ref = DB.collection(u'Users').document(userid)
 
         new_item = Item(
             request.form['name'], 
@@ -225,15 +229,12 @@ def validate_listing():
             request.form['category'],
             get_uploaded_images(request.files.getlist('picture')), 
             request.form['quality'], 
-            userid)
+            userid, itemref.id)
         print(dir(DB.collection(u'Items').document()))
 
-        itemref = DB.collection(u'Items').document()
-        user_ref = DB.collection(u'Users').document(userid)
         user_ref.update({
             u'selling': ArrayUnion([itemref.id])
         })
-
         itemref.set(new_item.to_dict())
         flash('New listing added')
         return redirect(url_for('userhome'))
@@ -249,7 +250,7 @@ def userhome():
         first_name = user_ref.get().get('fname')
         items = get_all_items()
         if request.method == 'POST':
-             save_item(request.form['itemid'], userid)
+            save_item(request.form['itemid'], userid)
         user_saved = user_ref.get().get('saved_items')
         return render_template("userhome.html", user_id=userid, name=first_name, items = items, user_saved = user_saved)
     else:
