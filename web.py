@@ -119,7 +119,8 @@ def get_uploaded_images(images):
 
 def upload_image(image, folder):
     unique = str(uuid.uuid4())
-    os.mkdir(folder)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
     image_filepath = os.path.join(app.config['UPLOAD_FOLDER'],folder, image.filename)
     image.save(image_filepath)
@@ -233,7 +234,9 @@ def validate_listing():
         user_ref.update({
             u'selling': ArrayUnion([itemref.id])
         })
-
+        DB.collection(u'Categories').document('categories').update({
+            request.form['category']: ArrayUnion([itemref.id])
+            })
         itemref.set(new_item.to_dict())
         flash('New listing added')
         return redirect(url_for('userhome'))
@@ -320,6 +323,9 @@ def sellinglist():
         userid = session['userid']
         if request.method == 'POST':
             unlist(request.form['itemid'], userid)
+            DB.collection(u'Categories').document('categories').update({
+            request.form['item_cat']: ArrayRemove([itemref.id])
+            })
         user_selling_list = get_items(userid, "selling")
         return render_template("selling.html", user_selling_list=user_selling_list)
     else:
