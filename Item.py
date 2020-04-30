@@ -44,7 +44,7 @@ class Item:
             'post_date' : self.post_date,
 			'available' : self.available,
 			'quality' : self.quality,
-			'buyers' : self.buyer,
+			'buyers' : self.buyers,
         }
 		
 		return items_dict

@@ -37,7 +37,6 @@ def get_all_items():
     items_list = []
     for item in items:
         item_dict = item.to_dict()
-        print(item_dict['available'])
         if item_dict['available']: 
             items_list.append(item_dict)
     return items_list
@@ -141,10 +140,15 @@ def pull_images(itemid):
     return images_src
 
 def unlist(itemid, userid):
+    '''removes an item from the seller's list, updates the item's availability status, and removes item from category'''
+
+    category = DB.collection(u'Items').document(itemid).get().to_dict()['category']
     item_ref = DB.collection(u'Items').document(itemid)
     user_ref = DB.collection(u'Users').document(userid)
+    cat_ref = DB.collection(u'Categories').document(category)
     item_ref.update({u'available': False})
     user_ref.update({u'selling':ArrayRemove([itemid])})
+    cat_ref.update({u'currentitems': ArrayRemove([itemid])})
 
 @app.route('/')
 def splash(): 
@@ -235,8 +239,8 @@ def validate_listing():
         user_ref.update({
             u'selling': ArrayUnion([itemref.id])
         })
-        DB.collection(u'Categories').document('categories').update({
-            request.form['category']: ArrayUnion([itemref.id])
+        DB.collection(u'Categories').document(request.form['category']).update({
+            u'currentitems': ArrayUnion([itemref.id])
             })
         itemref.set(new_item.to_dict())
         flash('New listing added')
@@ -298,8 +302,11 @@ def edituser():
 def list_item():
     '''displays form for user to list new item'''
     if 'userid' in session:
-        categories = DB.collection(u'Categories').document('categories').get().get('categories')
-        return render_template("list.html", categories = categories)
+        categories = DB.collection(u'Categories').stream()
+        cats = []
+        for category in categories:
+            cats.append(category.id)
+        return render_template("list.html", categories = cats)
     else:
         return redirect(url_for("login"))
 
@@ -324,9 +331,7 @@ def sellinglist():
         userid = session['userid']
         if request.method == 'POST':
             unlist(request.form['itemid'], userid)
-            DB.collection(u'Categories').document('categories').update({
-            request.form['item_cat']: ArrayRemove([itemref.id])
-            })
+
         user_selling_list = get_items(userid, "selling")
         return render_template("selling.html", user_selling_list=user_selling_list)
     else:
