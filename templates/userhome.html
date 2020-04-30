@@ -12,6 +12,24 @@
                 <input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search">
             </form>
         </div>
+        <!--CARD VIEW:
+        <div class="row row-cols-1 row-cols-md-3">
+            {% for item in items %}
+              <div class="col mb-4">
+                <div class="card h-100">
+                  <img src="..." class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">{{item['name']|title}}</h5>
+                    <span class="badge badge-light mb-2">{{item['category']}}</span>
+                    <p class="card-text">{{item['description'][0]|upper}}{{item['description'][1:]}}</p>
+                    <p class="card-text">Seller: {{item['seller']}}</p>
+                    <p class="card-text text-muted">Posted on {{item['post_date'].strftime('%m-%d-%y')}}</p>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+        -->
         <table class="table table-hover table-responsive-md table-striped" style="width:100%">
             <thead class="thead-gray">
                 <tr>
