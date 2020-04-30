@@ -14,7 +14,7 @@ from datetime import datetime
 class Item:
 	"""Class to represent an item to be listed"""
 
-	def __init__(self, name, price, description, category, images, quality, userid, itemid): 
+	def __init__(self, name, price, description, category, images, quality, userid, sellername, selleremail, school, itemid): 
 		"""Create an Item object with relevant attributes
 		- is it better to contain attributes in a single object?
 		TODO: implement database conenction
@@ -28,6 +28,9 @@ class Item:
 		self.itemid = itemid
 		self.quality = quality
 		self.post_date = datetime.now()
+		self.seller_name = sellername
+		self.school = school
+		self.seller_email = selleremail
 		self.buyers = []
 		self.available = True
 
@@ -40,6 +43,9 @@ class Item:
             'category' : self.category,
             'images' : self.images,
             'seller' : self.seller,
+			'seller_email' : self.seller_email,
+			'seller_name' : self.seller_name,
+			'school' : self.school,
             'id' : self.itemid,
             'post_date' : self.post_date,
 			'available' : self.available,

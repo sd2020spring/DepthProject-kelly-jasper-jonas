@@ -87,6 +87,7 @@ def check_email(email):
     emails = DB.collection(u'Emails').stream()
     for e in emails:
         if email == e.get('email') and not e.get('taken'):
+            DB.collection(u'Emails').document(e.id).update({u'taken' : True})
             return True
     return False
 
@@ -122,7 +123,7 @@ def get_uploaded_images(images, folder):
 
 def upload_image(image, folder):
     unique = str(uuid.uuid4())
-    cwd = os.getcwd()
+    path = os.getcwd()
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -142,8 +143,11 @@ def upload_image(image, folder):
 
     return get_media_link(new)
 
-def pull_images(itemid):
-    images_src = DB.collection(u'Items').document(itemid).get().get('images')
+def pull_images(sourceid, sourcename):
+    if sourcename == "item":
+        images_src = DB.collection(u'Items').document(sourceid).get().get('images')
+    elif sourcename == "user":
+        images_src = DB.collection(u'Users').document(sourceid).get().get('profile_pic')
     return images_src
 
 def unlist(itemid, userid):
@@ -232,6 +236,7 @@ def validate_listing():
         userid = session['userid']
         itemref = DB.collection(u'Items').document()
         user_ref = DB.collection(u'Users').document(userid)
+        sellername = user_ref.get().get('fname') + " " + user_ref.get().get('lname')[0]
 
         new_item = Item(
             request.form['name'], 
@@ -240,7 +245,7 @@ def validate_listing():
             request.form['category'],
             get_uploaded_images(request.files.getlist('picture'), "item"), 
             request.form['quality'], 
-            userid, itemref.id)
+            userid, sellername, user_ref.get().get('email'), user_ref.get().get('school'), itemref.id)
         print(dir(DB.collection(u'Items').document()))
 
         user_ref.update({
@@ -277,32 +282,41 @@ def edituser():
         userid = session['userid']
         user_info = DB.collection(u'Users').document(userid).get().to_dict()
         if request.method == 'POST':
-            if 0 in {len(request.form['fname']), len(request.form['lname']), len(request.form['email']), len(request.form['school'])}:
-                flash(u'Oops! Name, email, and school name are required!', 'error')
-                return render_template("edituser.html", user_id=userid, user_info=user_info)
             #User info changed
             user_ref = DB.collection(u'Users').document(userid)
-            password = request.form['password']
-            #Check if password was changed
-            if len(request.form['password']) == 0:
-                password = DB.collection(u'Users').document(userid).get().get('password')
-            #Check if passwords match
-            if request.form['password'] != request.form['confirmpass']:
-                flash(u'Oops! New passwords do not match!', 'error')
+            hashed_password = user_ref.get().get('password')
+            #Check if old password matches
+            if not check_password_hash(hashed_password, request.form['old_password']):
+                flash(u'Oops! password is incorrect')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
-            if check_email(request.form['email']):
-                user_info=User(request.form['fname'],
-                               request.form['lname'],
-                               request.form['email'],
-                               password,
-                               request.form['school'],
-                               request.form['grad'],
-                               request.form['phone'])
-                user_ref.set(user_info.to_dict(), merge = True)
-                flash('Your information was succesfully updated')
-            else:
-                flash(u'Invalid Email', 'error')
-        return render_template("edituser.html", user_id=userid, user_info=user_info)
+            #Check if password was changed
+            if not len(request.form['password']) == 0:
+                #Check if passwords match
+                if request.form['password'] != request.form['confirmpass']:
+                    flash(u'Oops! New passwords do not match!', 'error')
+                    return render_template("edituser.html", user_id=userid, user_info=user_info)
+                else: 
+                    hashed_password = generate_password_hash(request.form['password'])
+            
+            #check if email was changed
+            if not request.form['email'] == user_ref.get().get('email'):
+                # if email was changed, check if new email is valid
+                if not check_email(request.form['email']):
+                    flash(u'Invalid Email', 'error')
+                    return render_template("edituser.html", user_id=userid, user_info=user_info)
+
+            user_ref.update({
+                u'fname': request.form['fname'],
+                u'lname' : request.form['lname'],
+                u'email' : request.form['email'],
+                u'password' : hashed_password,
+                u'school' : request.form['school'],
+                u'grad_year' : request.form['grad'],
+                u'phone' : request.form['phone'], 
+                u'profile_pic' : get_uploaded_images(request.files.getlist('picture'), "user")})
+
+            flash('Your information was succesfully updated')
+        return render_template("edituser.html", user_id=userid, user_info=user_info, profilepic= pull_images(userid, "user")[0])
     else:
         return redirect(url_for("login"))
 
@@ -358,7 +372,7 @@ def item(itemid):
     if "userid" in session:
         userid = session['userid']
         item = DB.collection(u'Items').document(itemid).get().to_dict()
-        images = pull_images(itemid)
+        images = pull_images(itemid, "item")
         seller = DB.collection(u'Users').document(item['seller']).get().to_dict()
         return render_template("item.html", item=item, itemid=itemid, images=images, seller=seller)
     else:
@@ -372,9 +386,8 @@ def edititem(itemid):
         if request.method=="POST":
             item_ref = DB.collection(u'Items').document(itemid)
             item = DB.collection(u'Items').document(itemid).get().to_dict()
-            if len(request.files.getlist('picture')) > 0 :
-                pictures = get_uploaded_images(request.files.getlist('picture'), "item")
-                
+            if not request.files.getlist('picture')[0].filename=="":
+                pictures = get_uploaded_images(request.files.getlist('picture'), "item")        
             else:
                 pictures = item['images']
                 
@@ -389,7 +402,7 @@ def edititem(itemid):
             flash('Item information was succesfully updated')
         categories = get_categories()
         item2 = DB.collection(u'Items').document(itemid).get().to_dict()
-        images = pull_images(itemid)
+        images = pull_images(itemid, "item")
         return render_template("edititem.html", item=item2, itemid=itemid, images=images, categories = categories)
     else:
         return redirect(url_for("login"))

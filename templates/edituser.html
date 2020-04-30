@@ -3,15 +3,18 @@
 <div class="mx-auto" style="width: 400px; align:center">
         <h1 class="h1 mt-5 mb-4 text-center">Edit Profile</h1>
         <h5 class="h5 text-center mb-4">Update your profile info below.</h5>
-        <form action = "/edituser" method = "POST">
+        <form action = "/edituser" method = "POST" enctype='multipart/form-data'>
+            <img src="{{profilepic}}" alt="Item image" width="300" height="400">
+            <label for="picture">Upload profile picture</label><br>
+            <input type="file" id="picture" name="picture"><br>
             <label for="fname">First name:</label><br>
-            <input type="text" id="fname" name="fname" value="{{user_info['fname']}}" class="form-control" placeholder="Frank"><br>
+            <input type="text" id="fname" name="fname" value="{{user_info['fname']}}" class="form-control" placeholder="Frank" required><br>
             <label for="fname">Last name:</label><br>
-            <input type="text" id="lname" name="lname" value="{{user_info['lname']}}" class="form-control" placeholder="Olin"><br>
+            <input type="text" id="lname" name="lname" value="{{user_info['lname']}}" class="form-control" placeholder="Olin" required><br>
             <label for="grad">New graduation year</label><br>
-            <input type="number" id="grad" name="grad" value="{{user_info['grad_year']}}"class="form-control" placeholder="2020"><br>
+            <input type="number" id="grad" name="grad" value="{{user_info['grad_year']}}"class="form-control" placeholder="2020" required><br>
             <label for="email">Email address:</label><br>
-            <input type="text" id="email" name="email" value="{{user_info['email']}}" class="form-control" placeholder="frank@olin.edu"><br>
+            <input type="text" id="email" name="email" value="{{user_info['email']}}" class="form-control" placeholder="frank@olin.edu" required><br>
             <label for="phone">Phone number (optional):</label><br>
             <input type="text" id="phone" name="phone" value="{{user_info['phone']}}" class="form-control" placeholder="(555) 555-5555"><br>
             <label for="school">School:</label><br>
@@ -21,10 +24,12 @@
                 <option value="babson">Babson</option>
                 <option value="wellesley">Wellesley</option>
             </select><br/>
+            <label for="old_password">Old password:</label><br>
+            <input type ="password" id="old_password" name="old_password" class="form-control" placeholder="Something secure" required><br>
             <label for="password">New password:</label><br>
-            <input type ="password" id="password" name="password" class="form-control" placeholder="Something secure"><br>
+            <input type ="password" id="password" name="password" class="form-control" placeholder="Something secure" ><br>
             <label for="confirmpass">Confirm new password:</label><br>
-            <input type ="password" id="confirmpass" name="confirmpass" class="form-control" placeholder="The same thing, again"><br>
+            <input type ="password" id="confirmpass" name="confirmpass" class="form-control" placeholder="The same thing, again" ><br>
             <button class="btn btn-lg btn-primary btn-block" type="submit" id="sub" name="sub" value="Update">Update</button><br>
             <h1 class="h3 mt-4 mb-4 font-weight-bold text-center">Delete Profile</h1>
             <h5 class="h5 text-center mb-4">Enter your current password and hit delete to permanently delete your profile.</h5>

@@ -26,34 +26,34 @@
             {% endfor %}
         </select> 
         <p>Quality</p>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="new" name="quality" value="new" {{ 'checked="checked"' if item['quality'] == 'new' else "" }}>
-            <label class="form-check-label" for="new">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="new" name="quality" value="new" {{ 'checked="checked"' if item['quality'] == 'new' else "" }}>
+            <label class="custom-control-label" for="new">
                 Brand new
             </label><br>
         </div>  
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="lused" name="quality" value="lused"  {{ 'checked="checked"' if item['quality'] == 'lused' else "" }}>
-            <label class="form-check-label" for="lused">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="lused" name="quality" value="lused"  {{ 'checked="checked"' if item['quality'] == 'lused' else "" }}>
+            <label class="custom-control-label" for="lused">
                 Lightly used
             </label><br>
         </div>  
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="used" name="quality" value="used" {{ 'checked="checked"' if item['quality'] == 'used' else "" }}>
-            <label class="form-check-label" for="used">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="used" name="quality" value="used"  {{ 'checked="checked"' if item['quality'] == 'used' else "" }}>
+            <label class="custom-control-label" for="used">
                 Used
             </label><br>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="hused" name="quality" value="hused" {{ 'checked="checked"' if item['quality'] == 'hused' else "" }}>
-            <label class="form-check-label" for="hused">
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="hused" name="quality" value="hused"  {{ 'checked="checked"' if item['quality'] == 'hused' else "" }}>
+            <label class="custom-control-label" for="hused">
                 Heavily used
             </label><br>
         </div>
-        <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="fix" name="quality" value="fix" {{ 'checked="checked"' if item['quality'] == 'fix' else "" }}>
-                <label class="form-check-label"for="fix">
-                You'll need to make some repairs
+        <div class="custom-control custom-radio">
+                <input class="custom-control-input" type="radio" id="fix" name="quality" value="fix"  {{ 'checked="checked"' if item['quality'] == 'fix' else "" }}>
+                <label class="custom-control-label"for="fix">
+                Repairs necesssary
             </label><br>
         </div><br>
         <p>
