@@ -34,6 +34,7 @@
             <thead class="thead-gray">
                 <tr>
                     <th>Item Name</th>
+                    <th></th>
                     <th>Category</th>
                     <th>Date Posted</th>
                     <th>Description</th>
@@ -46,6 +47,11 @@
             {% for item in items %}
               <tr>
                 <td class="align-middle"><a href="/item/{{ item['id'] }}">{{item['name']|title}}</a></td>
+                <td class="align-middle">
+                    {% if item['seller'] == user_id %}
+                    <a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm ml-1">Edit</a>
+                    {% endif %}
+                </td>
                 <td class="align-middle">{{item['category']}}</td>
                 <td class="align-middle">{{item['post_date'].strftime('%m-%d-%y')}}</td>
                 <td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>

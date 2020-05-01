@@ -1,16 +1,22 @@
-{% extends "base.html" %}
-{% block body %}
-<div class="container mt-5">
-    <div style="max-width: 500px">
-        <h1>Edit your listing</h1>
-        <h5 >Change you item info below</h5>
+{% extends "main.html" %}
+{% block content %}
+<div class="container mx-auto" style="width: 400px; align:center">
+    <div class="row mt-5 mb-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <a href="/selling" type="button" class="btn btn-sm btn-outline-primary">Back</a>
+            </div>
+            <div class="col-auto align-self-center">
+                <h1 class="h1 text-right">Edit Listing</h1>
+            </div>
+        </div>
     </div>
-    <a href="/userhome">Back to home</a>
+    <h5 class="h5 text-center mb-4">Update your item info below.</h5>
     <form class="mt-4" style="max-width: 500px" action="/edititem/{{itemid}}" method="POST" enctype='multipart/form-data'>
         <label for="name">Item name</label><br>
         <input type="text" id="name" name="name" class="form-control" value="{{item['name']}}" required><br>
         <label for="description">Description</label><br>
-        <input type="text" id="description" name="description" class="form-control" value="{{item['description']}}" required><br>
+        <textarea type="text" id="description" name="description" class="form-control" placeholder="{{item['description']}}"value="{{item['description']}}" required></textarea><br>
         <label for="price">Price ($)</label><br>
         <input type="number" id="price" name="price" class="form-control" value="{{item['price']}}" required><br>
         <label for="category">Choose a category:</label>
@@ -53,12 +59,12 @@
         <div class="custom-control custom-radio">
                 <input class="custom-control-input" type="radio" id="fix" name="quality" value="fix"  {{ 'checked="checked"' if item['quality'] == 'fix' else "" }}>
                 <label class="custom-control-label"for="fix">
-                Repairs necesssary
+                Repairs necessary
             </label><br>
         </div><br>
         <p>
             {% for image in images %}
-                <img src="{{image}}" alt="Item image" width="300" height="400">
+                <img class="img-fluid " src="{{image}}" alt="Item image">
             {% endfor %}
         </p>
 

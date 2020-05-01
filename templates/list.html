@@ -1,7 +1,16 @@
 {% extends "main.html" %}
 {% block content %}
-<div class="mx-auto" style="width: 400px; align:center">
-        <h1 class="h1 mt-5 mb-4 text-center">List an Item!</h1>
+<div class="container mx-auto" style="width: 400px; align:center">
+    <div class="row mt-5 mb-4">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+                <a href="/userhome" type="button" class="btn btn-sm btn-outline-primary">Back</a>
+            </div>
+            <div class="col-auto align-self-center">
+                <h1 class="h1 text-right">List an Item!</h1>
+            </div>
+        </div>
+    </div>
         <h5 class="h5 text-center mb-4">Add some details and images about your item so people can see what you're selling!</h5>
     <form class="mt-4" style="max-width: 500px" action="/validatelisting" method="POST" enctype='multipart/form-data'>
         <label for="name">Item name</label><br>
@@ -49,7 +58,7 @@
         <div class="custom-control custom-radio">
                 <input class="custom-control-input" type="radio" id="fix" name="quality" value="fix">
                 <label class="custom-control-label"for="fix">
-                Repairs necesssary
+                Repairs necessary
             </label><br>
         </div><br>
         <label for="picture">Picture</label><br>
