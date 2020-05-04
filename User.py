@@ -31,7 +31,7 @@ class User:
 		self.looking_for = []
 		self.purchases = []
 		self.saved_items = []
-		self.pic = ''
+		self.pic = []
 
 	def to_dict(self):
 		
