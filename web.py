@@ -255,7 +255,7 @@ def validate_listing():
             u'currentitems': ArrayUnion([itemref.id])
             })
         itemref.set(new_item.to_dict())
-        flash('New listing added')
+        flash(u'New listing added!', 'success')
         return redirect(url_for('userhome'))
     else:
         pass
@@ -287,13 +287,13 @@ def edituser():
             hashed_password = user_ref.get().get('password')
             #Check if old password matches
             if not check_password_hash(hashed_password, request.form['old_password']):
-                flash(u'Oops! password is incorrect.')
+                flash(u'Oops! Password is incorrect.', 'danger')
                 return render_template("edituser.html", user_id=userid, user_info=user_info)
             #Check if password was changed
             if not len(request.form['password']) == 0:
                 #Check if passwords match
                 if request.form['password'] != request.form['confirmpass']:
-                    flash(u'Oops! New passwords do not match!', 'error')
+                    flash(u'Oops! New passwords do not match!', 'danger')
                     return render_template("edituser.html", user_id=userid, user_info=user_info)
                 else: 
                     hashed_password = generate_password_hash(request.form['password'])
@@ -302,7 +302,7 @@ def edituser():
             if not request.form['email'] == user_ref.get().get('email'):
                 # if email was changed, check if new email is valid
                 if not check_email(request.form['email']):
-                    flash(u'Invalid Email!', 'error')
+                    flash(u'Invalid Email!', 'danger')
                     return render_template("edituser.html", user_id=userid, user_info=user_info)
 
             user_ref.update({
@@ -315,7 +315,7 @@ def edituser():
                 u'phone' : request.form['phone'], 
                 u'profile_pic' : get_uploaded_images(request.files.getlist('picture'), "user")})
 
-            flash('Your information was succesfully updated!')
+            flash(u'Your information was succesfully updated!', 'success')
         return render_template("edituser.html", user_id=userid, user_info=user_info, profilepic= pull_images(userid, "user")[0])
     else:
         return redirect(url_for("login"))
@@ -399,7 +399,7 @@ def edititem(itemid):
                 u'category': request.form['category'],
                 u'images': pictures,
             })
-            flash('Item information was succesfully updated!')
+            flash(u'Item information was succesfully updated!', 'success')
         categories = get_categories()
         item2 = DB.collection(u'Items').document(itemid).get().to_dict()
         images = pull_images(itemid, "item")

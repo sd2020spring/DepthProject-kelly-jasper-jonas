@@ -4,7 +4,7 @@
     <div class="row mt-5 mb-4">
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
-                <a href="#" onclick="history.go(-1)" type="button" class="btn btn-sm btn-outline-primary">Back</a>
+                <a href="/selling" type="button" class="btn btn-sm btn-outline-primary">Back</a>
             </div>
             <div class="col-auto align-self-center">
                 <h1 class="h1 text-right">Edit Listing</h1>
@@ -12,6 +12,16 @@
         </div>
     </div>
     <h5 class="h5 text-center mb-4">Update your item info below.</h5>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <form class="mt-4" style="max-width: 500px" action="/edititem/{{itemid}}" method="POST" enctype='multipart/form-data'>
         <label for="name">Item name</label><br>
         <input type="text" id="name" name="name" class="form-control" value="{{item['name']}}" required><br>

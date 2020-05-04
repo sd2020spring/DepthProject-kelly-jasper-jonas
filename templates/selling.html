@@ -29,7 +29,7 @@
 			    <td class="align-middle">{{item['post_date'].strftime('%m-%d-%y')}}</td>
 			    <td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>
 			    <td class="align-middle">${{item['price']}}</td>
-			    <td class="text-center">
+			    <td class="class= align-middle text-center">
 			        <form action='/selling' method='POST'>
 		                <input type="hidden"  name="itemid" value="{{item['id']}}">
 		                <input type="hidden"  name="item_cat" value="{{item['category']}}">

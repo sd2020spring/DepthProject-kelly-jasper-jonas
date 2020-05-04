@@ -4,7 +4,7 @@
     <div class="row mt-5 mb-4">
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
-                <a href="#" onclick="history.go(-1)" type="button" class="btn btn-sm btn-outline-primary">Back</a>
+                <a href="/userhome" type="button" class="btn btn-sm btn-outline-primary">Back</a>
             </div>
             <div class="col-auto align-self-center">
                 <h1 class="h1 text-center">Edit Profile</h1>
@@ -12,6 +12,16 @@
         </div>
     </div>
     <h5 class="h5 text-center mb-4">Update your profile info below.</h5>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <form action = "/edituser" method = "POST" enctype='multipart/form-data'>
         <div class="row justify-content-center align-items-center mt-5 mb-4">
             <div class="col-sm-8 align-self-center">
