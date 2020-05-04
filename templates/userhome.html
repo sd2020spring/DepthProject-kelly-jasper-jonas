@@ -1,19 +1,29 @@
 {% extends "main.html" %}
 {% block content %}
-    <div class="container mt-5">
+    <div class="container mt-4">
         {% if name %}
         <h1 class="h1">Hello {{name}}!</h1>
         {% else %}
         <h1 class="h1">Hello, stranger!</h1>
         {% endif %}
         <h5>Search and add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
-        <div class="mt-4 mb-4">
+        <div class="mt-4 mb-3">
             <form class="">
                 <input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search">
             </form>
         </div>
-
-        <div class="row row-cols-1 row-cols-md-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              {{ message }} <a href="/wishlist">(view)</a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div class="row row-cols-1 row-cols-md-3 mt-2">
             {% for item in items %}
               <div class="col mb-4">
                 <div class="card bg-light h-100">
@@ -24,11 +34,8 @@
                         <h4 class="h4 card-title"><a href="/item/{{ item['id'] }}" class="stretched-link text-decoration-none text-dark">{{item['name']|title}}</a></h4>
                         <h5><span class="badge badge-md badge-info mb-2">{{item['category']}}</span></h5>
                         <p class="card-text">
-                            {{item['description'][0]|upper}}
-                            {% if item['description']|length > 100 %}
-                                {{item['description'][1:100]}}...
-                            {% else %}
-                                {{item['description'][1:]}}
+                            {{item['description'][0]|upper}}{% if item['description']|length > 100 %}{{item['description'][1:100]}}...
+                            {% else %}{{item['description'][1:]}}
                             {% endif %}
                             </p>
                     </div>
