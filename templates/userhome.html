@@ -1,138 +1,151 @@
 {% extends "main.html" %}
 {% block content %}
-    <div class="container mt-4">
-        {% if name %}
-        <h1 class="h1">Hello {{name}}!</h1>
-        {% else %}
-        <h1 class="h1">Hello, stranger!</h1>
-        {% endif %}
-        <h5>Search and add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
-        <div class="mt-4 mb-3">
-            <form class="">
-                <input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search">
-            </form>
-        </div>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              {{ message }}
-              {% if 'wishlist' in message %}
-                <a href="/wishlist">(view)</a>
-              {% endif %}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-2">
-            {% for item in items %}
-              <div class="col mb-4">
-                <div class="card bg-light h-100">
-                    <a href="/item/{{ item['id'] }}" class="text-decoration-none">
-                        <img class="card-img-top img-responsive" style="width:100%;height:20vw;object-fit: cover" src="{{item['images'][0]}}" alt="Item image">
-                    </a>
-                    <div class="card-body" style="transform: rotate(0);">
-                            <div class="row justify-content-between">
-                                <div class="col">
-                                    <h4 class="h4 card-title"><a href="/item/{{ item['id'] }}" class="stretched-link text-decoration-none text-dark">{{item['name']|title}}</a></h4>
-                                </div>  
-                                <div class="col-4">
-                                    <h3 class="h3 textright">
-                                    <span class="badge badge-secondary">${{item['price']}}</span></h3>
-                                </div>
-                            </div>
-                        <h5><span class="badge badge-md badge-info mb-2">{{item['category']}}</span></h5>
-                        <p class="card-text">
-                            {{item['description'][0]|upper}}{% if item['description']|length > 100 %}{{item['description'][1:100]}}...
-                            {% else %}{{item['description'][1:]}}
-                            {% endif %}
-                            </p>
-                    </div>
-                  <div class="card-footer container">
-                    <div class="row justify-content-between align-items-center">
-                            <div class="col-8">
-                                <p class="card-text">
-                                    Seller:
-                                    {% if item['seller'] == user_id %}
-                                        {{item['seller_name']|title}} (me)
-                                    {% else %}
-                                        <a href="mailto:{{item['seller_email']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items.">{{item['seller_name']|title}}</a>
-                                    {% endif %}
-                                </p>
-                                <p class="card-text text-muted mt-n2">
-                                    Posted on {{item['post_date'].strftime('%m-%d-%y')}}
-                                </p>
-                            </div>
-                            <div class="col-sm-3 text-center">
-                                    {% if item['seller'] == user_id %}
-                                        <a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm ml-1">Edit</a>
-                                    {% else %}
-                                        <form action='/userhome' method='POST'>
-                                            {% if user_saved and item['id'] in user_saved %}
-                                                <input type="hidden"  name="itemid" value="{{item['id']}}">
-                                                <button class="btn btn-link btn-sm text-decoration-none"  type="submit" value='Saved'>&#x2705;</button>
-                                            {% else %}
-                                                <input type="hidden" name="itemid" value="{{item['id']}}">
-                                                <button class="btn btn-link btn-md text-decoration-none"  type="submit" value='Save'>&#10084;</button>
-                                            {% endif %}
-                                        </form>
-                                    {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            {% endfor %}
-        </div>
-
-        <table class="table table-hover table-responsive-md table-striped" style="width:100%">
-            <thead class="thead-gray">
-                <tr>
-                    <th>Item Name</th>
-                    <th>Category</th>
-                    <th>Date Posted</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Seller</th>
-                    <th class="text-center">Save</th>
-                <tr>
-            </thead>
-            <tbody>
-            {% for item in items %}
-              <tr>
-                <td class="align-middle text-nowrap"><a href="/item/{{ item['id'] }}">{{item['name']|title}}</a></td>
-                <td class="align-middle">
-                    <span class="badge badge-info text-nowrap">{{item['category']}}</span>
-                </td>
-                <td class="align-middle text-nowrap">{{item['post_date'].strftime('%m-%d-%y')}}</td>
-                <td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>
-                <td class="align-middle text-nowrap">${{item['price']}}</td>
-                <td class="align-middle text-nowrap">
-                    {% if item['seller'] == user_id %}
-                    {{item['seller_name']|title}} (me)
-                    {% else %}<a href="mailto:{{item['seller_email']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items.">{{item['seller_name']|title}}
-                    {% endif %}
-                </a></td>
-                <td class="align-middle text-center text-nowrap">
-                    {% if item['seller'] == user_id %}
-                        <a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm ml-1">Edit</a>
-                    {% else %}
-                        <form action='/userhome' method='POST'>
-                            {% if user_saved and item['id'] in user_saved %}
-                                <input type="hidden"  name="itemid" value="{{item['id']}}">
-                                <button class="btn btn-link btn-sm text-decoration-none"  type="submit" value='Saved'>&#x2705;</button>
-                            {% else %}
-                                <input type="hidden" name="itemid" value="{{item['id']}}">
-                                <button class="btn btn-link btn-md text-decoration-none"  type="submit" value='Save'>&#10084;</button>
-                            {% endif %}
-                        </form>
-                    {% endif %}
-                </td>
-              </tr>    
-            {% endfor %}
-            </tbody>
-        </table> 
-    </div>
+	<div class="container mt-4">
+		{% if name %}
+		<h1 class="h1">Hello {{name}}!</h1>
+		{% else %}
+		<h1 class="h1">Hello, stranger!</h1>
+		{% endif %}
+		<h5>Search and add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
+		<div class="mt-4 mb-3">
+			<form class="">
+				<input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search">
+			</form>
+		</div>
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+		  {% if messages %}
+			{% for category, message in messages %}
+			  <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+			  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  {{ message }}
+			  {% if 'wishlist' in message %}
+				<a href="/wishlist">(view)</a>
+			  {% endif %}
+			  </div>
+			{% endfor %}
+		  {% endif %}
+		{% endwith %}
+		<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+		  <li class="nav-item">
+			<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fa fa-th"></i></a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fa fa-list"></i></a>
+		  </li>
+		</ul>
+		<div class="tab-content" id="pills-tabContent">
+		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+		  	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-2">
+			{% for item in items %}
+			  <div class="col mb-4">
+				<div class="card bg-light h-100">
+					<a href="/item/{{ item['id'] }}" class="text-decoration-none">
+						<img class="card-img-top img-responsive" style="width:100%;height:20vw;object-fit: cover" src="{{item['images'][0]}}" alt="Item image">
+					</a>
+					<div class="card-body" style="transform: rotate(0);">
+							<div class="row justify-content-between">
+								<div class="col">
+									<h4 class="h4 card-title"><a href="/item/{{ item['id'] }}" class="stretched-link text-decoration-none text-dark">{{item['name']|title}}</a></h4>
+								</div>  
+								<div class="col-4">
+									<h3 class="h3 text-right">
+									<span class="badge badge-primary">${{item['price']}}</span></h3>
+								</div>
+							</div>
+						<h5><span class="badge badge-md badge-info mb-2">{{item['category']}}</span></h5>
+						<p class="card-text">
+							{{item['description'][0]|upper}}{% if item['description']|length > 100 %}{{item['description'][1:100]}}...
+							{% else %}{{item['description'][1:]}}
+							{% endif %}
+							</p>
+					</div>
+				  <div class="card-footer container">
+					<div class="row justify-content-between align-items-center">
+							<div class="col-8">
+								<p class="card-text">
+									Seller:
+									{% if item['seller'] == user_id %}
+										{{item['seller_name']|title}} (me)
+									{% else %}
+										<a href="mailto:{{item['seller_email']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items.">{{item['seller_name']|title}}</a>
+									{% endif %}
+								</p>
+								<p class="card-text text-muted mt-n2">
+									Posted on {{item['post_date'].strftime('%m-%d-%y')}}
+								</p>
+							</div>
+							<div class="col-sm-3 text-center">
+									{% if item['seller'] == user_id %}
+										<a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm ml-1">Edit</a>
+									{% else %}
+										<form action='/userhome' method='POST'>
+											{% if user_saved and item['id'] in user_saved %}
+												<input type="hidden"  name="itemid" value="{{item['id']}}">
+												<button class="btn btn-link btn-sm text-decoration-none"  type="submit" value='Saved'>&#x2705;</button>
+											{% else %}
+												<input type="hidden" name="itemid" value="{{item['id']}}">
+												<button class="btn btn-link btn-md text-decoration-none"  type="submit" value='Save'>&#10084;</button>
+											{% endif %}
+										</form>
+									{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			  </div>
+			{% endfor %}
+		</div>
+		  </div>
+		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+		  	<table class="table table-hover table-responsive-md table-striped" style="width:100%">
+			<thead class="thead-gray">
+				<tr>
+					<th>Item Name</th>
+					<th>Category</th>
+					<th>Date Posted</th>
+					<th>Description</th>
+					<th>Price</th>
+					<th>Seller</th>
+					<th class="text-center">Save</th>
+				<tr>
+			</thead>
+			<tbody>
+			{% for item in items %}
+			  <tr>
+				<td class="align-middle text-nowrap"><a href="/item/{{ item['id'] }}">{{item['name']|title}}</a></td>
+				<td class="align-middle">
+					<span class="badge badge-info text-nowrap">{{item['category']}}</span>
+				</td>
+				<td class="align-middle text-nowrap">{{item['post_date'].strftime('%m-%d-%y')}}</td>
+				<td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>
+				<td class="align-middle text-nowrap">${{item['price']}}</td>
+				<td class="align-middle text-nowrap">
+					{% if item['seller'] == user_id %}
+					{{item['seller_name']|title}} (me)
+					{% else %}<a href="mailto:{{item['seller_email']}}?subject=[Frank%27s%20List]%20Buyer%20for%20{{item['name']|title}}&body=Hi%20there%2C%20I%27m%20interested%20in%20purchasing%20the%20following%20item%20you%20listed%3A%0D%0A%0D%0A{{item['name']|title}}%0D%0A%0D%0APlease%20respond%20to%20me%20at%20your%20earliest%20convenience%2C%20and%20thanks%21%0D%0A%0D%0A%0D%0AThis%20message%20was%20sent%20via%20the%20Frank%27s%20List%20webapp%2C%20a%20place%20for%20BOW%20students%20buy%20and%20sell%20items.">{{item['seller_name']|title}}
+					{% endif %}
+				</a></td>
+				<td class="align-middle text-center text-nowrap">
+					{% if item['seller'] == user_id %}
+						<a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm ml-1">Edit</a>
+					{% else %}
+						<form action='/userhome' method='POST'>
+							{% if user_saved and item['id'] in user_saved %}
+								<input type="hidden"  name="itemid" value="{{item['id']}}">
+								<button class="btn btn-link btn-sm text-decoration-none"  type="submit" value='Saved'>&#x2705;</button>
+							{% else %}
+								<input type="hidden" name="itemid" value="{{item['id']}}">
+								<button class="btn btn-link btn-md text-decoration-none"  type="submit" value='Save'>&#10084;</button>
+							{% endif %}
+						</form>
+					{% endif %}
+				</td>
+			  </tr>    
+			{% endfor %}
+			</tbody>
+		</table> 
+		  </div>
+		</div>
+	</div>
 {% endblock %}
