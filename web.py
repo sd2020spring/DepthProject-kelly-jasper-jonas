@@ -22,8 +22,8 @@ from User import *
 from Item import *
 from datetime import timedelta
 # from boto.s3.connection import S3Connection
-a = os.environ.get('client_id')
-print(a)
+SECRET_KEY = json.loads(os.environ.get('CLIENT_SECRET'))
+
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
 # SECRET_KEY = S3Connection(os.environ['client_email'])
 # SECRET_KEY = json.loads(os.environ.get('client_email', None))
@@ -458,8 +458,8 @@ def edititem(itemid):
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
-    cred = credentials.Certificate('ServiceAccountKey.json')
-    #cred = credentials.Certificate(SECRET_KEY)
+    # cred = credentials.Certificate('ServiceAccountKey.json')
+    cred = credentials.Certificate(SECRET_KEY)
 
     firebase_admin.initialize_app(cred, {
     'storageBucket': 'depth-project-jkjkky.appspot.com'
