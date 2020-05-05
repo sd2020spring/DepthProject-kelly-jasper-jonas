@@ -21,6 +21,9 @@ from User import *
 from Item import *
 from datetime import timedelta
 
+HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
+PORT = int(os.environ.get('PORT', 5000))
+
 app = Flask(__name__)
 app.secret_key="JKKYJK"
 app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
@@ -444,4 +447,5 @@ if __name__ == '__main__':
     # except google.cloud.exceptions.NotFound:
     #     print(u'Missing data')
         
-    app.run(debug=True)
+    app.run(host = HOST, port = PORT)
+    # app.run(debug=True)
