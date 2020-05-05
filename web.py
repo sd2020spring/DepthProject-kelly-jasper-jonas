@@ -11,6 +11,7 @@ Kelly Yen, Olin '23
 
 import os
 import uuid
+import json
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import firebase_admin
 from google.cloud.firestore_v1 import ArrayRemove, ArrayUnion
@@ -21,7 +22,7 @@ from User import *
 from Item import *
 from datetime import timedelta
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
-SECRET_KEY = JSON.parse(os.environ.get('CLIENT_SECRET', None))
+SECRET_KEY = json.parse(os.environ.get('CLIENT_SECRET', None))
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
 
