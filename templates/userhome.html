@@ -6,10 +6,21 @@
 		{% else %}
 		<h1 class="h1">Hello, stranger!</h1>
 		{% endif %}
-		<h5>Search and add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
+		<h5>Add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
 		<div class="mt-4 mb-3">
-			<form class="">
-				<input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search">
+			<form action=/userhome method='GET' class="">
+                <label for="category">Filter Items by Category:</label><br>
+                <select id="category" name="category" class="form-control">
+                    {% for category in categories %}
+                        {% if current_cat == category %}
+                        <option value="{{category}}" selected>{{category}}</option>
+                        {% else %}
+                        <option value="{{category}}">{{category}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button class="btn btn-lg btn-success btn-block mt-3" type="submit" id="sub" name="sub">Search</button><br>
+				<!--<input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search"> -->
 			</form>
 		</div>
 		{% with messages = get_flashed_messages(with_categories=true) %}
@@ -37,6 +48,7 @@
 		<div class="tab-content" id="pills-tabContent">
 		  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 		  	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-2">
+        {% if items %}
 			{% for item in items %}
 			  <div class="col mb-4">
 				<div class="card bg-light h-100">
@@ -97,6 +109,7 @@
 			{% endfor %}
 		</div>
 		  </div>
+        {% endif %}
 		  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
 		  	<table class="table table-hover table-responsive-md table-striped" style="width:100%">
 			<thead class="thead-gray">

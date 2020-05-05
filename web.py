@@ -22,10 +22,13 @@ from User import *
 from Item import *
 from datetime import timedelta
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
+'''
 SECRET_KEY = json.loads(os.environ.get('CLIENT_SECRET', None))
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
-
+'''
+HOST = '127.0.0.1'
+PORT = 5000
 app = Flask(__name__)
 app.secret_key="JKKYJK"
 app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
@@ -61,11 +64,32 @@ def get_items(userid, field):
     return items_list
 
 def get_categories():
+    '''
+    Gets all the categories from our database and returns them
+
+    Returns:
+            A list of categories
+    '''
     categories = DB.collection(u'Categories').stream()
     cats = []
     for category in categories:
         cats.append(category.id)
     return cats
+
+def get_items_category(category):
+    '''
+    Gets all items in a given category
+
+    Returns:
+            A list of dictionaries of items
+    '''
+    item_ids = DB.collection(u'Categories').document(category).get().get('currentitems')
+    print(item_ids)
+    items_list = []
+    for itemid in item_ids:
+        item = DB.collection(u'Items').document(itemid).get().to_dict()
+        items_list.append(item)
+    return items_list
 
 
 def login_validate(email, password_attempt):
@@ -276,10 +300,16 @@ def userhome():
         user_ref = DB.collection(u'Users').document(userid)
         first_name = user_ref.get().get('fname')
         items = get_all_items()
+        categories = get_categories()
+        current_cat = None
+        if request.method == 'GET':
+            if request.args.get('category') != None:
+                current_cat = request.args.get('category')
+                items = get_items_category(current_cat)
         if request.method == 'POST':
             save_item(request.form['itemid'], userid)
         user_saved = user_ref.get().get('saved_items')
-        return render_template("userhome.html", user_id=userid, name=first_name, items = items, user_saved = user_saved)
+        return render_template("userhome.html", user_id=userid, name=first_name, items = items, user_saved = user_saved, categories = categories, current_cat = current_cat)
     else:
         return redirect(url_for("login"))
 
@@ -425,8 +455,8 @@ def edititem(itemid):
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
-    # cred = credentials.Certificate('ServiceAccountKey.json')
-    cred = credentials.Certificate(SECRET_KEY)
+    cred = credentials.Certificate('ServiceAccountKey.json')
+    #cred = credentials.Certificate(SECRET_KEY)
 
     firebase_admin.initialize_app(cred, {
     'storageBucket': 'depth-project-jkjkky.appspot.com'
