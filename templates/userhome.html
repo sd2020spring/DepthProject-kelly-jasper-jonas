@@ -8,20 +8,7 @@
 		{% endif %}
 		<h5>Add items to your wishlist, or contact the seller directly by clicking their name below.</h5>
 		<div class="mt-4 mb-3">
-			<form action=/userhome method='GET' class="">
-                <label for="category">Filter Items by Category:</label><br>
-                <select id="category" name="category" class="form-control">
-                    {% for category in categories %}
-                        {% if current_cat == category %}
-                        <option value="{{category}}" selected>{{category}}</option>
-                        {% else %}
-                        <option value="{{category}}">{{category}}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-                <button class="btn btn-lg btn-success btn-block mt-3" type="submit" id="sub" name="sub">Search</button><br>
-				<!--<input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search"> -->
-			</form>
+		
 		</div>
 		{% with messages = get_flashed_messages(with_categories=true) %}
 		  <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
@@ -37,12 +24,39 @@
 			{% endfor %}
 		  {% endif %}
 		{% endwith %}
-		<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+		<ul class="nav nav-pills mb-3 align-items-center" id="pills-tab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fa fa-th"></i></a>
+		  	</li>
+		  	<li class="nav-item mx-2">
+				<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fa fa-list"></i></a>
+		  	</li>
 		  <li class="nav-item">
-			<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fa fa-th"></i></a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fa fa-list"></i></a>
+		  	<form action=/userhome method='GET' class="form-inline">
+				<div class="form-row align-items-end">
+					<div class="col-auto">
+                		<select id="category" name="category" class="form-control">
+                			{% if current_cat == None %}
+		                        <option value="" disabled selected>Filter Items by Category</option>
+		                    {% endif %}
+		                    {% for category in categories %}
+		                        {% if current_cat == category %}
+		                        <option value="{{category}}" selected>{{category}}</option>
+		                        {% else %}
+		                        <option value="{{category}}">{{category}}</option>
+		                        {% endif %}
+		                    {% endfor %}
+                		</select>
+					</div>
+					<div class="col-auto">
+						<button class="btn btn-primary" type="submit" id="sub" name="sub">Search</button><br>
+					</div>
+					<div class="col-auto">
+						<a class="btn btn-danger" href="/userhome" role="button">Reset</a>
+					</div>
+				</div>
+				<!--<input class="form-control" type="text" id="search" placeholder="Search for an item..." aria-label="Search"> -->
+			</form>
 		  </li>
 		</ul>
 		<div class="tab-content" id="pills-tabContent">
