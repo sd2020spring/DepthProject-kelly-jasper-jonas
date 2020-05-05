@@ -21,14 +21,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from User import *
 from Item import *
 from datetime import timedelta
+# from boto.s3.connection import S3Connection
+
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
-'''
-SECRET_KEY = json.loads(os.environ.get('CLIENT_SECRET', None))
+
+SECRET_KEY = json.loads(os.environ.get('client_email', None))
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
-'''
-HOST = '127.0.0.1'
-PORT = 5000
+
+# HOST = '127.0.0.1'
+# PORT = 5000
 app = Flask(__name__)
 app.secret_key="JKKYJK"
 app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
@@ -470,15 +472,6 @@ if __name__ == '__main__':
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-    #test if firebase connection is working
-    # doc_ref = DB.collection(u'Users').limit(1)
-    # try:
-    #     docs = doc_ref.get()
-    #     for doc in docs:
-    #         print(u'Doc Data:{}'.format(doc.to_dict()))
-    # except google.cloud.exceptions.NotFound:
-    #     print(u'Missing data')
         
     app.run(host = HOST, port = PORT)
     # app.run(debug=True)
