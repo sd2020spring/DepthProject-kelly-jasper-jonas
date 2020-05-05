@@ -19,16 +19,17 @@
 			<tbody>
 			{% for item in user_selling_list %}
 			  <tr>
-			  	<td class="align-middle">
-			  	{{item['name']|title}}</td>
-			  	<td>
+			  	<td class="align-middle text-nowrap"><strong>{{item['name']|title}}</strong></td>
+			  	<td class="align-middle text-nowrap">
 			  		<a href="/item/{{ item['id'] }}" role="button" class="btn btn-outline-secondary btn-sm m-1">View</a>
 		    		<a href="/edititem/{{ item['id'] }}" role="button" class="btn btn-outline-primary btn-sm m-1">Edit</a>
 		    	</td>
-			    <td class="align-middle">{{item['category']}}</td>
-			    <td class="align-middle">{{item['post_date'].strftime('%m-%d-%y')}}</td>
+			    <td class="align-middle">
+			    	<span class="badge badge-info text-nowrap">{{item['category']}}</span>
+			    </td>
+			    <td class="align-middle text-nowrap">{{item['post_date'].strftime('%m-%d-%y')}}</td>
 			    <td class="align-middle">{{item['description'][0]|upper}}{{item['description'][1:]}}</td>
-			    <td class="align-middle">${{item['price']}}</td>
+			    <td class="align-middle text-nowrap">${{item['price']}}</td>
 			    <td class="class= align-middle text-center">
 			        <form action='/selling' method='POST'>
 		                <input type="hidden"  name="itemid" value="{{item['id']}}">
