@@ -16,7 +16,7 @@ from datetime import datetime
 class User:
 	"""Class to represent the user"""
 
-	def __init__(self, fname, lname, email, password, school, grad_year, phone=None):
+	def __init__(self, fname, lname, email, password, school, grad_year, profilepic, phone=None):
 		"""Create a User objecta
 		TODO: impelement database connection
 		"""
@@ -31,7 +31,7 @@ class User:
 		self.looking_for = []
 		self.purchases = []
 		self.saved_items = []
-		self.pic = []
+		self.pic = [profilepic]
 
 	def to_dict(self):
 		

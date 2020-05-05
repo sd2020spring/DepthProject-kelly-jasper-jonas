@@ -157,6 +157,7 @@ def unlist(itemid, userid):
     item_ref = DB.collection(u'Items').document(itemid)
     user_ref = DB.collection(u'Users').document(userid)
     cat_ref = DB.collection(u'Categories').document(category)
+
     item_ref.update({u'available': False})
     user_ref.update({u'selling':ArrayRemove([itemid])})
     cat_ref.update({u'currentitems': ArrayRemove([itemid])})
@@ -219,8 +220,10 @@ def validate_signup():
         if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
             
             hashed = generate_password_hash(request.form['password'])
+            #default profile picture
+            profilepic = "https://firebasestorage.googleapis.com/v0/b/depth-project-jkjkky.appspot.com/o/user%2Fdefaultprofilepic.png?alt=media&token=cfa0adee-0870-4b24-b46a-6bad0b5028cd"
 
-            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['grad'],request.form['phone'])
+            user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['grad'], profilepic, request.form['phone'])
             DB.collection(u'Users').add(user.to_dict())   
 
             return redirect(url_for("login")) #user must log in after creating account
@@ -305,6 +308,12 @@ def edituser():
                     flash(u'Invalid Email!', 'danger')
                     return render_template("edituser.html", user_id=userid, user_info=user_info)
 
+            #check if user added profile picture 
+            if not request.files.getlist('picture')[0].filename=="":
+                pictures = get_uploaded_images(request.files.getlist('picture'), "user")        
+            else:
+                pictures = user_ref.get().get('profile_pic')
+
             user_ref.update({
                 u'fname': request.form['fname'],
                 u'lname' : request.form['lname'],
@@ -313,10 +322,12 @@ def edituser():
                 u'school' : request.form['school'],
                 u'grad_year' : request.form['grad'],
                 u'phone' : request.form['phone'], 
-                u'profile_pic' : get_uploaded_images(request.files.getlist('picture'), "user")})
+                u'profile_pic' : pictures,
+            })
 
             flash(u'Your information was succesfully updated!', 'success')
-        return render_template("edituser.html", user_id=userid, user_info=user_info, profilepic= pull_images(userid, "user")[0])
+        user_info1 = DB.collection(u'Users').document(userid).get().to_dict()
+        return render_template("edituser.html", user_id=userid, user_info=user_info1, profilepic= pull_images(userid, "user")[0])
     else:
         return redirect(url_for("login"))
 
