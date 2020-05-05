@@ -2,4 +2,3 @@ ServiceAccountKey.json
 __pycache__
 __pycache__/Item.cpython-37.pyc
 __pycache__/User.cpython-37.pyc
-.env
