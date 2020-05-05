@@ -20,7 +20,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from User import *
 from Item import *
 from datetime import timedelta
-
+#comment out the following three lines if hosting locally and change credential setup in line 428/427
+SECRET_KEY = JSON.parse(os.environ.get('CLIENT_SECRET', None))
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
 
@@ -423,7 +424,8 @@ def edititem(itemid):
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
-    cred = credentials.Certificate('ServiceAccountKey.json')
+    # cred = credentials.Certificate('ServiceAccountKey.json')
+    cred = credentials.Certificate(SECRET_KEY)
 
     firebase_admin.initialize_app(cred, {
     'storageBucket': 'depth-project-jkjkky.appspot.com'
