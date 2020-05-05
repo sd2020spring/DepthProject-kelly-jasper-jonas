@@ -22,7 +22,7 @@ from User import *
 from Item import *
 from datetime import timedelta
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
-SECRET_KEY = json.parse(os.environ.get('CLIENT_SECRET', None))
+SECRET_KEY = json.loads(os.environ.get('CLIENT_SECRET', None))
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
 
