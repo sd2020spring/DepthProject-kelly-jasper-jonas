@@ -22,8 +22,10 @@ from User import *
 from Item import *
 from datetime import timedelta
 # from boto.s3.connection import S3Connection
-print(os.environ.get('CLIENT_SECRET'))
-SECRET_KEY = json.loads(os.environ.get('CLIENT_SECRET'))
+a = os.environ.get('CLIENT_SECRET')
+print(a)
+
+SECRET_KEY = json.loads(a)
 
 #comment out the following three lines if hosting locally and change credential setup in line 428/427
 # SECRET_KEY = S3Connection(os.environ['client_email'])
