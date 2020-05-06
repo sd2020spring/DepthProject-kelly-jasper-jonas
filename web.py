@@ -94,7 +94,7 @@ def get_items_category(category):
     items_list = []
     for itemid in item_ids:
         item = DB.collection(u'Items').document(itemid).get().to_dict()
-        if item_dict['available']: 
+        if item['available']: 
             items_list.append(item)
     return items_list
 
