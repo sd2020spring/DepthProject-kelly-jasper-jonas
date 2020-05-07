@@ -26,7 +26,7 @@
         <label for="name">Item name</label><br>
         <input type="text" id="name" name="name" class="form-control" value="{{item['name']}}" required><br>
         <label for="description">Description</label><br>
-        <textarea type="text" id="description" name="description" class="form-control" placeholder="{{item['description']}}" value="{{item['description']}}" required></textarea><br>
+        <textarea type="text" id="description" name="description" class="form-control" value="{{item['description']}}" required>{{item['description']}}</textarea><br>
         <label for="price">Price ($)</label><br>
         <input type="number" id="price" name="price" class="form-control" value="{{item['price']}}" required><br>
         <label for="category">Choose a category:</label>
