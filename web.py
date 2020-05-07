@@ -84,14 +84,15 @@ def get_items_category(category):
     Gets all items in a given category
 
     Returns:
-            A list of dictionaries of items
+            A list of items
     '''
     item_ids = DB.collection(u'Categories').document(category).get().get('currentitems')
     print(item_ids)
     items_list = []
     for itemid in item_ids:
         item = DB.collection(u'Items').document(itemid).get().to_dict()
-        items_list.append(item)
+        if item['available']: 
+            items_list.append(item)
     return items_list
 
 
@@ -121,7 +122,7 @@ def check_email(email):
         if email == e.get('email') and not e.get('taken'):
             DB.collection(u'Emails').document(e.id).update({u'taken' : True})
             return True
-    return False
+    return True
 
 def save_item(itemid, userid):
     '''
@@ -142,11 +143,23 @@ def save_item(itemid, userid):
     return None
 
 def get_media_link(filename):
+    '''
+    Gets the media link for a given filename
+
+    Returns:
+            A media link
+    '''
     image_blob = bucket.get_blob(filename)
     image_blob.make_public()
     return image_blob.media_link
 
 def get_uploaded_images(images, folder):
+    '''
+    Gets all the images in a folder
+
+    Returns:
+            A list of image links
+    '''
     uploaded_images = []
     for image in images:
         uploaded_images.append(upload_image(image, folder))
@@ -154,6 +167,14 @@ def get_uploaded_images(images, folder):
     return uploaded_images
 
 def upload_image(image, folder):
+    '''
+    Uploads image to DB
+
+    Params:
+            Image and folder destination
+    Returns:
+            An image link
+    '''
     unique = str(uuid.uuid4())
     path = os.getcwd()
     if not os.path.exists(folder):
@@ -176,6 +197,15 @@ def upload_image(image, folder):
     return get_media_link(new)
 
 def pull_images(sourceid, sourcename):
+    '''
+    Gets a stored image given an id and source
+
+    Params:
+            Source name - either item or user
+            Unique source ID
+    Returns:
+            Image link(s)
+    '''
     if sourcename == "item":
         images_src = DB.collection(u'Items').document(sourceid).get().get('images')
     elif sourcename == "user":
@@ -183,8 +213,11 @@ def pull_images(sourceid, sourcename):
     return images_src
 
 def unlist(itemid, userid):
-    '''removes an item from the seller's list, updates the item's availability status, and removes item from category'''
-
+    '''
+    Removes an item from the seller's list
+    Updates the item's availability status
+    Removes item from category
+    '''
     category = DB.collection(u'Items').document(itemid).get().to_dict()['category']
     item_ref = DB.collection(u'Items').document(itemid)
     user_ref = DB.collection(u'Users').document(userid)
@@ -194,14 +227,20 @@ def unlist(itemid, userid):
     user_ref.update({u'selling':ArrayRemove([itemid])})
     cat_ref.update({u'currentitems': ArrayRemove([itemid])})
 
+    return None
+
 @app.route('/')
 def splash(): 
-    '''Displays the landing page and prompts user to sign up or log in'''
+    '''
+    Displays the landing page and prompts user to sign up or log in
+    '''
     return render_template('index.html')
 
 @app.route('/login')
 def login():
-    ''' Checks if user is already logged into a session, if not asks them to log in'''
+    ''' 
+    Checks if user is already logged into a session, if not asks them to log in
+    '''
     if "userid" in session:
         return redirect(url_for("userhome"))
     else:
@@ -209,30 +248,39 @@ def login():
 
 @app.route("/logout")
 def logout():
-    '''log out of session and redirects to log in page'''
+    '''
+    Log out of session and redirect to log in page
+    '''
     session.pop("userid", None)
     return(redirect(url_for("login")))
 
 @app.route("/signup")
 def signup():
-    '''Displays sign up page'''
+    '''
+    Displays sign up page
+    '''
     return render_template("signup.html")
 
 @app.route('/loginerror')
 def loginerror():
-    '''Displays an error if user logs in with invalid credentials'''
+    '''
+    Displays an error if user logs in with invalid credentials
+    '''
     return render_template('loginerror.html')
 
 @app.route('/signuperror')
 def signuperror():
-    '''Displays an error if user signs up with invalid credentials'''
+    '''
+    Displays an error if user signs up with invalid credentials
+    '''
     return render_template("loginerror.html")
 
 @app.route('/validatelogin', methods = ['POST', 'GET'])
 def validate_login():
     '''
     Validates a user's log in
-    if user provided valid credentials, renders the userhome page, otherwise redirects to login error'''
+    Ff user provided valid credentials, renders the userhome page, otherwise redirects to login error
+    '''
     if request.method == 'POST':
        valid, userid = login_validate(request.form['email'], request.form['password'])
        if valid:
@@ -247,7 +295,13 @@ def validate_login():
 
 @app.route('/validatesignup', methods = ['POST', 'GET'])
 def validate_signup():
-    '''validates sign up by checking to make sure all fields are filled out properly, email belongs to a student, and password matches confirmed password'''
+    '''
+    Validates sign up by checking:
+
+            all fields are filled out properly, 
+            email belongs to a student,
+            password matches confirmed password
+    '''
     if request.method == 'POST':
         if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
             
@@ -267,6 +321,9 @@ def validate_signup():
 
 @app.route('/validatelisting', methods = ['POST', 'GET'])
 def validate_listing():
+    '''
+    Creates a new listing based on form input from listing page
+    '''
     if request.method == 'POST':
         userid = session['userid']
         itemref = DB.collection(u'Items').document()
@@ -297,7 +354,9 @@ def validate_listing():
 
 @app.route("/userhome", methods = ['POST', 'GET'])
 def userhome():
-    '''displays the user homepage, which consists of item listings and navbar'''
+    '''
+    Displays the user homepage, which consists of item listings and navbar
+    '''
     if "userid" in session:
         userid = session['userid']
         user_ref = DB.collection(u'Users').document(userid)
@@ -312,13 +371,16 @@ def userhome():
         if request.method == 'POST':
             save_item(request.form['itemid'], userid)
         user_saved = user_ref.get().get('saved_items')
+
         return render_template("userhome.html", user_id=userid, name=first_name, items = items, user_saved = user_saved, categories = categories, current_cat = current_cat)
     else:
         return redirect(url_for("login"))
 
 @app.route("/edituser", methods=['POST', 'GET'])
 def edituser():
-    '''Displays form for user to edit their information'''
+    '''
+    Displays form for user to edit their information
+    '''
     if "userid" in session:
         userid = session['userid']
         user_info = DB.collection(u'Users').document(userid).get().to_dict()
@@ -371,7 +433,9 @@ def edituser():
 
 @app.route("/list")
 def list_item():
-    '''displays form for user to list new item'''
+    '''
+    Displays form for user to list new item
+    '''
     if 'userid' in session:
         cats = get_categories()
         return render_template("list.html", categories = cats)
@@ -380,7 +444,9 @@ def list_item():
 
 @app.route("/wishlist", methods = ['POST', 'GET'])
 def wishlist():
-    '''displays user saved items'''
+    '''
+    Displays user saved items
+    '''
     if 'userid' in session:
         userid = session['userid']
 
@@ -394,7 +460,9 @@ def wishlist():
 
 @app.route("/selling", methods = ['POST', 'GET'])
 def sellinglist():
-    '''display items user is selling'''
+    '''
+    Display items user is selling
+    '''
     if "userid" in session:
         userid = session['userid']
         if request.method == 'POST':
@@ -407,7 +475,9 @@ def sellinglist():
 
 @app.route("/purchases", methods = ['POST', 'GET'])
 def purchased():
-    '''display items user has purchased in the past'''
+    '''
+    Display items user has purchased in the past
+    '''
     if "userid" in session:
         userid = session['userid']
         user_bought = get_items(userid, "purchases")
@@ -417,7 +487,9 @@ def purchased():
 
 @app.route("/item/<itemid>") 
 def item(itemid):
-    '''displays one item's information in depth'''
+    '''
+    Displays one item's information in depth
+    '''
     if "userid" in session:
         userid = session['userid']
         item = DB.collection(u'Items').document(itemid).get().to_dict()
@@ -429,7 +501,9 @@ def item(itemid):
 
 @app.route("/edititem/<itemid>", methods = ['POST', 'GET'])
 def edititem(itemid):
-    '''edit item info'''
+    '''
+    Displays form to edit item info
+    '''
     if "userid" in session:
         userid = session['userid']
         if request.method=="POST":

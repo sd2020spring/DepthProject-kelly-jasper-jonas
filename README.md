@@ -1,12 +1,28 @@
 # Frank's List
 This is an online store meant for buying and selling used goods throughout the BOW (Babson, Olin, Wellesley) community.  
-  
-This web app is built using flask, firebase, and Jinja.
-Run web.py to view our website locally. Make sure flask and firebase admin sdk are installed. A key is needed to access the firebase database.  
+    
+[Click here for more details about our project](https://sd2020spring.github.io/DepthProject-kelly-jasper-jonas/)
 
-Our goal is to make it easier for BOW students to exchange items. This will reduce physical and digital (email) waste.  
- 
-To build on this project, you can add functionality through the .py files and update the page displays in the templates folder.  
+# Getting Started  
+Make sure the following packages are installed:  
+- [Flask](https://flask.palletsprojects.com)
+- [Firebase_admin](https://firebase.google.com/) 
+- [Requests](https://requests.readthedocs.io/en/master/)
   
-Contributors: Kelly Yen, Jasper Katzban, Jonas Kazlauskas  
-Contact jkazlauskas@olin.edu with any questions.  
+Run web.py to view our website locally.  
+To build on this project, you can add functionality through the .py files and update the page displays in the templates folder.  
+
+# Contributors  
+- Kelly Yen  
+- Jasper Katzban  
+- Jonas Kazlauskas  
+
+# Acknowledgments  
+We used the following libraries and packages to build the core functionality of our app:
+- [Python 3](https://www.python.org/)
+- [Flask](https://flask.palletsprojects.com)
+- [Firebase](https://firebase.google.com/)
+- [Bootstrap](https://getbootstrap.com/)
+
+We'd also like to thank our SoftDes professors [Steve Matsumoto](https://www.stevematsumoto.net/) and [Amon Millner](http://www.amonmillner.com/), as well as the amazing NINJAs and our peers. 
+
