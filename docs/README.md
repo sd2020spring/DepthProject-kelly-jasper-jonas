@@ -41,25 +41,28 @@ Our website utilizes a variety of tools and libraries. We use a firebase firesto
 ## Impact
 For our project, we wanted to create something that could be legitimately used by members of our college community and beyond. Though our work is not deeply rooted in any ethical agendas or goals, we did see this as an opportunity to add value to the world while learning some new software development skills along the way.
 
-At Olin, we have a strong focus on preparing students for the world of entrepreneurship and learning how to solve real problems in uncharted waters. One of our foundation courses, Products & Markets, does just this - and previous work by a team member in that course was the inspiration for the core functionality of this project.
+At Olin, we have a strong focus on preparing students for the world of entrepreneurship and learning how to solve real problems in uncharted waters. One of our foundation courses, Products & Markets, does just this- and previous work by a team member in that course was the inspiration for the core functionality of this project.
 
-At Olin, we have a system called ‘CarpeDiem’ or ‘carpe’ for short - it’s a mailing list that serves as a bulletin for members of our community to share thoughts, events, resources, and to sell items. We saw that, although this system works well as a whole, it lacked specific features necessary to buying and selling items. In other words, Craigslist via email is a big no. 
+At Olin, we have a system called ‘CarpeDiem’ or ‘carpe’ for short - it’s a mailing list that serves as a bulletin for members of our community to share thoughts, events, resources, and items to sell. From the user research our team member conducted as part of her Products & Markets coursework, she determined that many Olin students avoid using carpe because it clutters their inbox and provides a lot of irrelevant information. A better system to sell and purchase second hand items where be one in which users can easily sort through previous listings and customize their preferences so they only recieive notifications about listings they'd be interested in. After gathering feedback from Babson, Olin, and wellesley students, our team member determined that most students accross all three colleges wanted and would use an online store to exchange second hand items. 
 
 With this in mind, we decided to create a web app that allowed for the easy buying and selling items within the college community. <add more from P&M>
 
 
 ## Project Evolution
-We began wireframing our website MVP:
+We began by wireframing our website MVP:
 
 ![MVP Wireframe](system-architecture-mvp.png)
 
-Next, we created a set of simple HTML templates that displayed some text and were routed using flask. From there, we started learning how to pass data into and out of the pages using the flask and HTML forms, and defined some of our classes like item and user. <insert early stage picture>.
+Next, we created a set of simple HTML templates that displayed some text and were routed using flask. From there, we started learning how to pass data into and out of the pages using the flask and HTML forms, and defined our Item and User classes, which would eventually be used to initialize database documents. <insert early stage picture>.
 
-After our first architectural review, we decided to use firebase to store data. We quickly learned how to work with this package, and started building out more simple html pages and displaying data.
+After our first architectural review, we decided to use firebase to store data. We created a firebase firestore database, and learned how to use the firebase-admin module to store, reference, and update information in the database. Meanwhile, we continued to build out the front end of our website and created simple html pages that could display the data being passed from firebase. 
 
-This work continued fairly linearly, and we eventually decided we wanted it to look pretty. This is when we implemented bootstrap to quickly add formatting and beautify the website. <insert ugle image then pretty image XD> This work continued while we built out the rest of our pages. <idk show some cool features or something in a pic>. 
+The first iteration of our website contained a sign up, log in, and user home page where listed items would be displayed. From there, we built out the item listing page, where users could add items they wanted to sell. Next, we added the edit user and edit item listing pages so that users could edit the information displayed on their profile pages and their listed item pages. We also implemented the "save for later" feature which allows users to save an item they see on their home page, and then view that item later in their wishlist page. Next, we created the "selling" page, which lets users view which items they're selling, and unlist items they longer want to sell. Lastly, we used firebase's storage capabilities to upload and retrieve user profile pictures as well as item picutres. 
 
-Some stretch goals include integrating with a cashapp service, offering a more polished user experience, and implementing more features such as keyword search, social media integration, and mobile site optimization.
+
+While building out the main features and pages of our web app, we implemented bootstrap to quickly add formatting and beautify the website.<talk more about ui stuff> <insert ugle image then pretty image XD> <idk show some cool features or something in a pic>. 
+
+If we were to continue working on this project, we could try integrating a cashapp service such as paypal or venmo, offering a more polished user experience, and making it easier for users to handle transactions. We could also implement features such as a notifaction system, social media integration, and mobile site optimization. If we wanted this web app to function at the scale it's intended for, we'll need to utilize database searching services such as algolia or elasticsearch to ensure that keywording searching takes an optimal amount of time. Additionally, before deploying our webapp to be used by actual customers, we would need to conduct user testing to determine which layouts and designs are most intuitive for our target user group. 
 
 - initial motives
 - planning phase
