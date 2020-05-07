@@ -10,9 +10,15 @@ Our goal is to build an online store for college students to sell and buy second
 
 
 ## How do I use it?
-Simply head over to [this link](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
+Simply head over to the [live site](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
+
+<img src="Images/userhome.PNG" width="100"> <img src="Images/wishlist.PNG" width="100"> <img src="Images/item.PNG" width="100"> <img src="Images/selling.PNG" width="100">
+
+<img src="Images/category-search.PNG" width="100"> <img src="Images/menubar.PNG" width="100"> <img src="Images/list-item.PNG" width="100"> <img src="Images/sign-up.PNG" width="100"> 
+ 
 
 #### Getting Started
+
 Before being able to use the website, users need to sign up for an account, which requires them to provide their full name, home institution, graduation year, and email. If the user tries to sign up with an email that isn’t on an approved list, the user will be unable to sign up (this feature is built in to prevent people who don’t go to the college from using the website). 
 
 #### Browsing Items
