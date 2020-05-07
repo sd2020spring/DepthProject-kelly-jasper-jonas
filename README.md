@@ -1,5 +1,7 @@
 # Frank's List
 This is an online store meant for buying and selling used goods throughout the BOW (Babson, Olin, Wellesley) community.  
+    
+[Click here for more details about our project](https://sd2020spring.github.io/DepthProject-kelly-jasper-jonas/)
 
 # Getting Started  
 Make sure the following packages are installed:  
