@@ -21,15 +21,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from User import *
 from Item import *
 from datetime import timedelta
-# from boto.s3.connection import S3Connection
-a = os.environ.get('CLIENT_SECRET')
-print(a)
 
-SECRET_KEY = json.loads(a)
+# a = os.environ.get('CLIENT_SECRET')
 
-#comment out the following three lines if hosting locally and change credential setup in line 428/427
+# SECRET_KEY = json.loads(a)
 # SECRET_KEY = S3Connection(os.environ['client_email'])
-# SECRET_KEY = json.loads(os.environ.get('client_email', None))
+
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
 
