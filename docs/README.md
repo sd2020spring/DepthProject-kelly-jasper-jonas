@@ -1,6 +1,6 @@
 <img src="FL-FullColor-Full.png" width="100"> 
 
-# Frank's List 
+# [Frank's List](http://softdes-final.herokuapp.com/)
 ### A simple web app for buying and selling items within the [BOW](https://www.bow3colleges.org/) community, created by [Jasper Katzban](https://github.com/jasperkatzban/), [Kelly Yen](https://github.com/jellyyams/), and [Jonas Kazlauskas](https://github.com/jonaskaz) at [Olin College](http://www.olin.edu/).
 
 
@@ -10,7 +10,7 @@ Our goal is to build an online store for college students to sell and buy second
 
 
 ## How do I use it?
-Simply head over to http://softdes-final.herokuapp.com/ to get started! Read on for more details, or feel free to poke around yourself!
+Simply head over to [this link](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
 
 #### Getting Started
 Before being able to use the website, users need to sign up for an account, which requires them to provide their full name, home institution, graduation year, and email. If the user tries to sign up with an email that isn’t on an approved list, the user will be unable to sign up (this feature is built in to prevent people who don’t go to the college from using the website). 
