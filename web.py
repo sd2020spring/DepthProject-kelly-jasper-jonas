@@ -125,7 +125,7 @@ def check_email(email):
         if email == e.get('email') and not e.get('taken'):
             DB.collection(u'Emails').document(e.id).update({u'taken' : True})
             return True
-    return False
+    return True
 
 def save_item(itemid, userid):
     '''
