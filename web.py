@@ -22,7 +22,7 @@ from User import *
 from Item import *
 from datetime import timedelta
 
-
+#sets the host and port depending on whether website is being hosted locally or remotely (on heroku)
 HOST = '0.0.0.0' if 'PORT' in os.environ else '127.0.0.1'
 PORT = int(os.environ.get('PORT', 5000))
 
@@ -30,11 +30,11 @@ PORT = int(os.environ.get('PORT', 5000))
 # PORT = 5000
 app = Flask(__name__)
 app.secret_key="JKKYJK"
-app.permanent_session_lifetime = timedelta(days=2) #how long session lasts
+app.permanent_session_lifetime = timedelta(days=2) #how long a session lasts before logging user out
 
 def get_all_items():
     '''
-    Gathers all the items in the DB
+    Gathers all the items in the DB that are available
 
     Returns:
             All DB items in a list of dictionaries
@@ -83,7 +83,6 @@ def get_items_category(category):
             A list of items
     '''
     item_ids = DB.collection(u'Categories').document(category).get().get('currentitems')
-    print(item_ids)
     items_list = []
     for itemid in item_ids:
         item = DB.collection(u'Items').document(itemid).get().to_dict()
@@ -97,8 +96,8 @@ def login_validate(email, password_attempt):
     Validates login by checking for matching email and password
     
     Returns:
-            -True/False: whether login credentials are valid
-            -user.id: id of user 
+            True/False: whether login credentials are valid
+            user.id: id of user 
     '''
     users = DB.collection(u'Users').stream()
     for user in users:
@@ -111,7 +110,7 @@ def check_email(email):
     Checks if the email a user is signing up with is approved (whether they're a student or not)
 
     Returns:
-            True if email is approved and not taken, False otherwise
+            True if email is approved and not taken, False otherwise (might always return true to let people test out website)
     '''
     emails = DB.collection(u'Emails').stream()
     for e in emails:
@@ -200,7 +199,7 @@ def pull_images(sourceid, sourcename):
             Source name - either item or user
             Unique source ID
     Returns:
-            Image link(s)
+            list of Image link(s)
     '''
     if sourcename == "item":
         images_src = DB.collection(u'Items').document(sourceid).get().get('images')
@@ -275,7 +274,7 @@ def signuperror():
 def validate_login():
     '''
     Validates a user's log in
-    Ff user provided valid credentials, renders the userhome page, otherwise redirects to login error
+    if user provided valid credentials, renders the userhome page, otherwise redirects to login error
     '''
     if request.method == 'POST':
        valid, userid = login_validate(request.form['email'], request.form['password'])
@@ -299,10 +298,11 @@ def validate_signup():
             password matches confirmed password
     '''
     if request.method == 'POST':
+        #checks if the email is valid and if the passwords match
         if check_email(request.form['email']) and request.form['password'] == request.form['confirmpass']:
-            
+            #hashes password before storing in database
             hashed = generate_password_hash(request.form['password'])
-            #default profile picture
+            #sets initial profile picture to default picture
             profilepic = "https://firebasestorage.googleapis.com/v0/b/depth-project-jkjkky.appspot.com/o/user%2Fdefaultprofilepic.png?alt=media&token=cfa0adee-0870-4b24-b46a-6bad0b5028cd"
 
             user=User(request.form['fname'],request.form['lname'],request.form['email'],hashed,request.form['school'],request.form['grad'], profilepic, request.form['phone'])
@@ -310,7 +310,6 @@ def validate_signup():
 
             return redirect(url_for("login")) #user must log in after creating account
         else:
-
             error = "Invalid email or password confirmation"
             redirect(url_for('signuperror'))
     return redirect(url_for('signuperror'))
@@ -324,8 +323,9 @@ def validate_listing():
         userid = session['userid']
         itemref = DB.collection(u'Items').document()
         user_ref = DB.collection(u'Users').document(userid)
+        #stores the seller's first name and last initial to be displayed on item info page
         sellername = user_ref.get().get('fname') + " " + user_ref.get().get('lname')[0]
-
+        #creates new item
         new_item = Item(
             request.form['name'], 
             request.form['price'], 
@@ -334,11 +334,11 @@ def validate_listing():
             get_uploaded_images(request.files.getlist('picture'), "item"), 
             request.form['quality'], 
             userid, sellername, user_ref.get().get('email'), user_ref.get().get('school'), itemref.id)
-        print(dir(DB.collection(u'Items').document()))
-
+        #adds the new item's id to user's "selling" field
         user_ref.update({
             u'selling': ArrayUnion([itemref.id])
         })
+        #adds teh new item's id to its category's item field 
         DB.collection(u'Categories').document(request.form['category']).update({
             u'currentitems': ArrayUnion([itemref.id])
             })
@@ -360,10 +360,12 @@ def userhome():
         items = get_all_items()
         categories = get_categories()
         current_cat = None
+        #displays items that belong to the category user picked 
         if request.method == 'GET':
             if request.args.get('category') != None:
                 current_cat = request.args.get('category')
                 items = get_items_category(current_cat)
+        #add an item's to the user's "saved_items" field
         if request.method == 'POST':
             save_item(request.form['itemid'], userid)
         user_saved = user_ref.get().get('saved_items')
@@ -395,6 +397,7 @@ def edituser():
                     flash(u'Oops! New passwords do not match!', 'danger')
                     return render_template("edituser.html", user_id=userid, user_info=user_info)
                 else: 
+                    #if they do match, hash the new password to be stored in database
                     hashed_password = generate_password_hash(request.form['password'])
             
             #check if email was changed
@@ -422,6 +425,7 @@ def edituser():
             })
 
             flash(u'Your information was succesfully updated!', 'success')
+        #gets most updated user info upon loading page
         user_info1 = DB.collection(u'Users').document(userid).get().to_dict()
         return render_template("edituser.html", user_id=userid, user_info=user_info1, profilepic= pull_images(userid, "user")[0])
     else:
@@ -505,6 +509,7 @@ def edititem(itemid):
         if request.method=="POST":
             item_ref = DB.collection(u'Items').document(itemid)
             item = DB.collection(u'Items').document(itemid).get().to_dict()
+            #check if new images were uploaded
             if not request.files.getlist('picture')[0].filename=="":
                 pictures = get_uploaded_images(request.files.getlist('picture'), "item")        
             else:
@@ -528,7 +533,9 @@ def edititem(itemid):
 
 if __name__ == '__main__':
     # Configures database and gets access to the database
+    # Un comment out the following line if hosting locally with key
     # cred = credentials.Certificate('ServiceAccountKey.json')
+    #comment out the following lines if hosting locally with key
     cred = credentials.Certificate({
         "type": "service_account",
         "project_id": os.environ.get('project_id'),
@@ -548,7 +555,7 @@ if __name__ == '__main__':
     # Initialize the client for interfacing with the database
     DB = firestore.client()
     bucket = storage.bucket()
-
+    #initializes uploads folder for where images will be stored temporarily before uploading to database
     UPLOAD_FOLDER = os.getcwd()
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 

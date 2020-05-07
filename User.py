@@ -11,14 +11,26 @@ Kelly Yen, Olin '23
 
 
 import numpy as np
-from datetime import datetime
 
 class User:
 	"""Class to represent the user"""
 
 	def __init__(self, fname, lname, email, password, school, grad_year, profilepic, phone=None):
-		"""Create a User objecta
-		TODO: impelement database connection
+		"""Create a User object
+
+		Attributes: 
+			fname: string, first name of user
+			lname: string, last name of user
+			email: string, user's valid school email
+			phone: string, optional, user's phone number
+			school: string, the college the student attends
+			password: string, the hashed version of the password user picked
+			grad_year: int, the year user will graduate 
+			items_sold: A list of items user sold in past
+			looking_for: a list of keywords or categories that user's looking for. Will be used to send notification to user
+			purchases: a list of items users bought in the past
+			saved_items: list of of itmes user's interested in buying (aka wishlsit)
+			pic: string, link to image source of profile picture
 		"""
 		self.fname = fname
 		self.lname = lname
