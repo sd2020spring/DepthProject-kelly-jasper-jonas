@@ -7,18 +7,41 @@
 ## What is it?
 Our goal is to build an online store for college students to sell and buy second-hand goods from each other at an affordable price. It would function similarly to [Craigslist](https://www.craigslist.org/), but without the risk of interacting with complete strangers, and would be designed to cater towards college student’s needs. Ideally, a website like this will help reduce the waste and make it easier for students to exchange items.
 
+## What does it look like?
+Here's some demo images of the app's user interface:
 
+<div class="row">
+ <div class="column">
+  <img src="Images/userhome.PNG" width="100">
+ </div>
+ <div class="column">
+  <img src="Images/wishlist.PNG" width="100">
+ </div>
+ <div class="column">
+  <img src="Images/item.PNG" width="100">
+ </div>
+ <div class="column">
+  <img src="Images/selling.PNG" width="100">
+ </div>
+</div><br>
+
+<div class="row" style="align-items-center">
+ <div class="column">
+  <img src="Images/list-item.PNG" width="100">
+ </div>
+ <div class="column">
+  <img src="Images/sign-up.PNG" width="100">
+ </div>
+ <div class="column">
+  <img src="Images/category-search.PNG" width="100"><br>
+  <img src="Images/menubar.PNG" width="100">
+ </div>
+</div>
 
 ## How do I use it?
 Simply head over to the [live site](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
 
-<img src="Images/userhome.PNG" width="100"> <img src="Images/wishlist.PNG" width="100"> <img src="Images/item.PNG" width="100"> <img src="Images/selling.PNG" width="100">
-
-<img src="Images/category-search.PNG" width="100"> <img src="Images/menubar.PNG" width="100"> <img src="Images/list-item.PNG" width="100"> <img src="Images/sign-up.PNG" width="100"> 
- 
-
 #### Getting Started
-
 Before being able to use the website, users need to sign up for an account, which requires them to provide their full name, home institution, graduation year, and email. If the user tries to sign up with an email that isn’t on an approved list, the user will be unable to sign up (this feature is built in to prevent people who don’t go to the college from using the website). 
 
 #### Browsing Items
@@ -42,6 +65,7 @@ Users can edit their user profile and submit a profile picture.
 
 ## How does it work?
 Our website utilizes a variety of tools and libraries. We use a firebase firestore database to store all of the user and item information. Our website uses flask to host and serve webpages, and the bootstrap library to help style and organize each webpage. 
+[add]
 
 
 ## Impact
@@ -51,7 +75,8 @@ At Olin, we have a strong focus on preparing students for the world of entrepren
 
 At Olin, we have a system called ‘CarpeDiem’ or ‘carpe’ for short - it’s a mailing list that serves as a bulletin for members of our community to share thoughts, events, resources, and items to sell. From the user research our team member conducted as part of her Products & Markets coursework, she determined that many Olin students avoid using carpe because it clutters their inbox and provides a lot of irrelevant information. A better system to sell and purchase second hand items where be one in which users can easily sort through previous listings and customize their preferences so they only recieive notifications about listings they'd be interested in. After gathering feedback from Babson, Olin, and wellesley students, our team member determined that most students accross all three colleges wanted and would use an online store to exchange second hand items. 
 
-With this in mind, we decided to create a web app that allowed for the easy buying and selling items within the college community. <add more from P&M>
+With this in mind, we decided to create a web app that allowed for the easy buying and selling items within the college community. 
+<add more from P&M>
 
 
 ## Project Evolution
@@ -69,13 +94,6 @@ The first iteration of our website contained a sign up, log in, and user home pa
 While building out the main features and pages of our web app, we implemented bootstrap to quickly add formatting and beautify the website.<talk more about ui stuff> <insert ugle image then pretty image XD> <idk show some cool features or something in a pic>. 
 
 If we were to continue working on this project, we could try integrating a cashapp service such as paypal or venmo, offering a more polished user experience, and making it easier for users to handle transactions. We could also implement features such as a notifaction system, social media integration, and mobile site optimization. If we wanted this web app to function at the scale it's intended for, we'll need to utilize database searching services such as algolia or elasticsearch to ensure that keywording searching takes an optimal amount of time. Additionally, before deploying our webapp to be used by actual customers, we would need to conduct user testing to determine which layouts and designs are most intuitive for our target user group. 
-
-- initial motives
-- planning phase
-- initial implementation
-- resources we used over time
-- feature map?
-- current features vs stretch goals
 
 
 ## Attribution
