@@ -10,33 +10,8 @@ Our goal is to build an online store for college students to sell and buy second
 ## What does it look like?
 Here's some demo images of the app's user interface:
 
-<div class="row">
- <div class="column">
-  <img src="Images/userhome.PNG" width="100">
- </div>
- <div class="column">
-  <img src="Images/wishlist.PNG" width="100">
- </div>
- <div class="column">
-  <img src="Images/item.PNG" width="100">
- </div>
- <div class="column">
-  <img src="Images/selling.PNG" width="100">
- </div>
-</div><br>
+<img src="Images/userhome.PNG" width="30%"> <img src="Images/wishlist.PNG" width="30%"> <img src="Images/item.PNG" width="30%">
 
-<div class="row" style="align-items-center">
- <div class="column">
-  <img src="Images/list-item.PNG" width="100">
- </div>
- <div class="column">
-  <img src="Images/sign-up.PNG" width="100">
- </div>
- <div class="column">
-  <img src="Images/category-search.PNG" width="100"><br>
-  <img src="Images/menubar.PNG" width="100">
- </div>
-</div>
 
 ## How do I use it?
 Simply head over to the [live site](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
@@ -89,7 +64,6 @@ Next, we created a set of simple HTML templates that displayed some text and wer
 After our first architectural review, we decided to use firebase to store data. We created a firebase firestore database, and learned how to use the firebase-admin module to store, reference, and update information in the database. Meanwhile, we continued to build out the front end of our website and created simple html pages that could display the data being passed from firebase. 
 
 The first iteration of our website contained a sign up, log in, and user home page where listed items would be displayed. From there, we built out the item listing page, where users could add items they wanted to sell. Next, we added the edit user and edit item listing pages so that users could edit the information displayed on their profile pages and their listed item pages. We also implemented the "save for later" feature which allows users to save an item they see on their home page, and then view that item later in their wishlist page. Next, we created the "selling" page, which lets users view which items they're selling, and unlist items they longer want to sell. Lastly, we used firebase's storage capabilities to upload and retrieve user profile pictures as well as item picutres. 
-
 
 While building out the main features and pages of our web app, we implemented bootstrap to quickly add formatting and beautify the website.<talk more about ui stuff> <insert ugle image then pretty image XD> <idk show some cool features or something in a pic>. 
 
