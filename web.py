@@ -207,6 +207,15 @@ def pull_images(sourceid, sourcename):
         images_src = DB.collection(u'Users').document(sourceid).get().get('profile_pic')
     return images_src
 
+def unlist_selling(userid):
+    '''
+    unlists all of the items user is selling
+    '''
+    user_ref = DB.collection(u'Users').document(userid)
+    selling = user_ref.get().get('selling')
+    for items in selling:
+        unlist(items, userid)
+
 def unlist(itemid, userid):
     '''
     Removes an item from the seller's list
@@ -381,10 +390,21 @@ def edituser():
     '''
     if "userid" in session:
         userid = session['userid']
+        user_ref = DB.collection(u'Users').document(userid)
         user_info = DB.collection(u'Users').document(userid).get().to_dict()
         if request.method == 'POST':
-            #User info changed
-            user_ref = DB.collection(u'Users').document(userid)
+            #User deleted profile
+            if request.form['sub'] == 'Delete':
+                if check_password_hash(user_ref.get().get('password'), request.form['delpass']):
+                    unlist_selling(userid)
+                    user_ref.delete()
+                    session.clear()
+                    flash('Profile deleted')
+                    return redirect(url_for('splash'))
+                else:
+                    flash('Wrong password')
+                    return render_template("edituser.html", user_id=userid, user_info=user_info)
+            #User edited profile
             hashed_password = user_ref.get().get('password')
             #Check if old password matches
             if not check_password_hash(hashed_password, request.form['old_password']):
@@ -534,7 +554,7 @@ def edititem(itemid):
 if __name__ == '__main__':
     # Configures database and gets access to the database
     # Un comment out the following line if hosting locally with key
-    # cred = credentials.Certificate('ServiceAccountKey.json')
+    cred = credentials.Certificate('ServiceAccountKey.json')
     #comment out the following lines if hosting locally with key
     cred = credentials.Certificate({
         "type": "service_account",
