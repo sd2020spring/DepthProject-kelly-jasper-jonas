@@ -554,7 +554,7 @@ def edititem(itemid):
 if __name__ == '__main__':
     # Configures database and gets access to the database
     # Un comment out the following line if hosting locally with key
-    cred = credentials.Certificate('ServiceAccountKey.json')
+    # cred = credentials.Certificate('ServiceAccountKey.json')
     #comment out the following lines if hosting locally with key
     cred = credentials.Certificate({
         "type": "service_account",
