@@ -12,6 +12,7 @@ Here's some demo images of the app's user interface:
 
 <img src="Images/userhome.PNG" width="30%"> <img src="Images/wishlist.PNG" width="30%"> <img src="Images/item.PNG" width="30%">
 
+#### [More Images](https://github.com/sd2020spring/DepthProject-kelly-jasper-jonas/tree/master/docs/Images)
 
 ## How do I use it?
 Simply head over to the [live site](http://softdes-final.herokuapp.com/) to get started! Read on for more details, or feel free to poke around yourself!
@@ -39,8 +40,7 @@ Users can edit their user profile and submit a profile picture.
 
 
 ## How does it work?
-Our website utilizes a variety of tools and libraries. We use a firebase firestore database to store all of the user and item information. Our website uses flask to host and serve webpages, and the bootstrap library to help style and organize each webpage. 
-[add]
+Our website utilizes a variety of tools and libraries. We use a Firebase Firestore database to store all of the user and item information, in combination with Flask to route and serve webpages. We also use Bootstrap front end library to help style and organize each webpage. Finally, all the functionality is tied together with Python, which handles the back end logic including verifying user input, interfacing with the database, and parsing files. 
 
 
 ## Impact
@@ -48,24 +48,22 @@ For our project, we wanted to create something that could be legitimately used b
 
 At Olin, we have a strong focus on preparing students for the world of entrepreneurship and learning how to solve real problems in uncharted waters. One of our foundation courses, Products & Markets, does just this- and previous work by a team member in that course was the inspiration for the core functionality of this project.
 
-At Olin, we have a system called ‘CarpeDiem’ or ‘carpe’ for short - it’s a mailing list that serves as a bulletin for members of our community to share thoughts, events, resources, and items to sell. From the user research our team member conducted as part of her Products & Markets coursework, she determined that many Olin students avoid using carpe because it clutters their inbox and provides a lot of irrelevant information. A better system to sell and purchase second hand items where be one in which users can easily sort through previous listings and customize their preferences so they only recieive notifications about listings they'd be interested in. After gathering feedback from Babson, Olin, and wellesley students, our team member determined that most students accross all three colleges wanted and would use an online store to exchange second hand items. 
+At Olin, we have a system called ‘CarpeDiem’ or ‘carpe’ for short - it’s a mailing list that serves as a bulletin for members of our community to share thoughts, events, resources, and items to sell. From the user research our team member conducted as part of her Products & Markets coursework, she determined that many Olin students avoid using carpe because it clutters their inbox and provides a lot of irrelevant information. A better system to sell and purchase second hand items where be one in which users can easily sort through previous listings and customize their preferences so they only recieive notifications about listings they'd be interested in. After gathering feedback from Babson, Olin, and Wellesley students, our team member determined that most students accross all three colleges wanted and would use an online store to exchange second hand items. 
 
-With this in mind, we decided to create a web app that allowed for the easy buying and selling items within the college community. 
-<add more from P&M>
-
+With this in mind, we decided to create a web app that allowed for the easy buying and selling items within the college community, based on the user research done in Products and Markets.
 
 ## Project Evolution
 We began by wireframing our website MVP:
 
 ![MVP Wireframe](system-architecture-mvp.png)
 
-Next, we created a set of simple HTML templates that displayed some text and were routed using flask. From there, we started learning how to pass data into and out of the pages using the flask and HTML forms, and defined our Item and User classes, which would eventually be used to initialize database documents. <insert early stage picture>.
+Next, we created a set of simple HTML templates that displayed some text and were routed using flask. From there, we started learning how to pass data into and out of the pages using the flask and HTML forms, and defined our Item and User classes, which would eventually be used to initialize database documents.
 
 After our first architectural review, we decided to use firebase to store data. We created a firebase firestore database, and learned how to use the firebase-admin module to store, reference, and update information in the database. Meanwhile, we continued to build out the front end of our website and created simple html pages that could display the data being passed from firebase. 
 
 The first iteration of our website contained a sign up, log in, and user home page where listed items would be displayed. From there, we built out the item listing page, where users could add items they wanted to sell. Next, we added the edit user and edit item listing pages so that users could edit the information displayed on their profile pages and their listed item pages. We also implemented the "save for later" feature which allows users to save an item they see on their home page, and then view that item later in their wishlist page. Next, we created the "selling" page, which lets users view which items they're selling, and unlist items they longer want to sell. Lastly, we used firebase's storage capabilities to upload and retrieve user profile pictures as well as item picutres. 
 
-While building out the main features and pages of our web app, we implemented bootstrap to quickly add formatting and beautify the website.<talk more about ui stuff> <insert ugle image then pretty image XD> <idk show some cool features or something in a pic>. 
+While building out the main features and pages of our web app, we implemented bootstrap to quickly add formatting and beautify the website. Rather than writing our own custom CSS and even more python (or javascript) code to make it functional, we used pre-built components to quickly mock up a well-formatted and visually sound app.
 
 If we were to continue working on this project, we could try integrating a cashapp service such as paypal or venmo, offering a more polished user experience, and making it easier for users to handle transactions. We could also implement features such as a notifaction system, social media integration, and mobile site optimization. If we wanted this web app to function at the scale it's intended for, we'll need to utilize database searching services such as algolia or elasticsearch to ensure that keywording searching takes an optimal amount of time. Additionally, before deploying our webapp to be used by actual customers, we would need to conduct user testing to determine which layouts and designs are most intuitive for our target user group. 
 
